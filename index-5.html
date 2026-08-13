@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vida Esportiva • Gestão Financeira</title>
+<style>
+:root{
+  --verde:#087443;--verde2:#05613a;--verde3:#0b8f54;
+  --azul:#0756b8;--azul2:#0b3d91;
+  --fundo:#f3f5f7;--branco:#fff;--texto:#17202a;--muted:#68737d;
+  --linha:#e2e7eb;--vermelho:#d63345;--amarelo:#f0ad00;--verde-ok:#198754;
+  --sombra:0 5px 18px rgba(0,0,0,.08);
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--fundo);color:var(--texto)}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+.app{min-height:100vh;display:flex}
+.sidebar{position:fixed;left:0;top:0;bottom:0;width:245px;background:var(--verde2);color:#fff;padding:18px 12px;z-index:20;overflow:auto}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:20px;padding:8px 10px 20px}
+.brand-ball{font-size:30px}
+.nav button{width:100%;border:0;background:transparent;color:#eaf8f1;text-align:left;padding:12px 13px;border-radius:9px;margin:3px 0}
+.nav button:hover,.nav button.active{background:rgba(255,255,255,.14)}
+.nav small{display:block;color:#b8d9ca;padding:15px 13px 5px}
+.content{margin-left:245px;width:calc(100% - 245px);padding:24px}
+.top{display:flex;justify-content:space-between;gap:15px;align-items:center;margin-bottom:20px}
+.top h1{margin:0;font-size:25px}
+.top p{margin:5px 0 0;color:var(--muted)}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+.btn{border:0;border-radius:8px;padding:10px 14px;font-weight:700}
+.primary{background:var(--verde);color:#fff}.secondary{background:#fff;border:1px solid var(--linha);color:var(--texto)}
+.danger{background:var(--vermelho);color:#fff}.blue{background:var(--azul);color:#fff}
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px}
+.card{background:#fff;border:1px solid var(--linha);border-radius:12px;padding:17px;box-shadow:var(--sombra)}
+.card .label{font-size:13px;color:var(--muted)}
+.card .value{font-size:25px;font-weight:800;margin-top:7px}
+.card.green{border-left:5px solid var(--verde-ok)}.card.red{border-left:5px solid var(--vermelho)}
+.card.yellow{border-left:5px solid var(--amarelo)}.card.bluecard{border-left:5px solid var(--azul)}
+.panel{background:#fff;border:1px solid var(--linha);border-radius:12px;padding:18px;margin-bottom:18px;box-shadow:var(--sombra)}
+.panel h2{font-size:18px;margin:0 0 15px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.form-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.field label{display:block;font-size:12px;font-weight:700;margin-bottom:5px}
+.field input,.field select,.field textarea{width:100%;padding:10px;border:1px solid #ccd4da;border-radius:8px;background:#fff}
+.field.full{grid-column:1/-1}
+.table-wrap{overflow:auto}
+table{width:100%;border-collapse:collapse;min-width:720px}
+th,td{padding:10px 9px;border-bottom:1px solid var(--linha);text-align:left;font-size:13px}
+th{background:#f7f9fa}
+.badge{display:inline-block;padding:5px 8px;border-radius:999px;font-size:11px;font-weight:800}
+.pago{background:#dff5e8;color:#146c43}.atrasado{background:#fde2e5;color:#b42333}
+.pendente{background:#fff2cc;color:#856404}.futuro{background:#dfeeff;color:#0756b8}
+.page{display:none}.page.active{display:block}
+.searchbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.searchbar input{flex:1;min-width:220px;padding:10px;border:1px solid #ccd4da;border-radius:8px}
+.empty{text-align:center;color:var(--muted);padding:25px}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;padding:15px;z-index:50}
+.modal.show{display:flex}
+.modal-box{background:#fff;width:min(700px,100%);max-height:92vh;overflow:auto;border-radius:14px;padding:20px}
+.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}
+.close{border:0;background:#eee;border-radius:7px;padding:7px 11px}
+.toast{position:fixed;right:18px;bottom:18px;background:#17202a;color:#fff;padding:12px 15px;border-radius:8px;display:none;z-index:100}
+.toast.show{display:block}
+.mobile-menu{display:none}
+.footer-note{font-size:12px;color:var(--muted);margin-top:12px}
+@media(max-width:1000px){
+ .cards{grid-template-columns:repeat(2,1fr)}.grid2{grid-template-columns:1fr}
+}
+@media(max-width:700px){
+ .sidebar{display:none}.content{margin-left:0;width:100%;padding:14px}.mobile-menu{display:block}
+ .top{align-items:flex-start}.top h1{font-size:21px}.cards{grid-template-columns:1fr 1fr}
+ .form-grid{grid-template-columns:1fr}.field.full{grid-column:auto}
+ .actions .btn{padding:9px 10px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar">
+  <div class="brand"><span class="brand-ball">⚽</span><span>Vida Esportiva</span></div>
+  <div class="nav">
+    <small>GESTÃO</small>
+    <button class="active" data-page="dashboard">📊 Dashboard</button>
+    <button data-page="alunos">👥 Alunos</button>
+    <button data-page="pagamentos">💳 Pagamentos</button>
+    <button data-page="despesas">💰 Despesas</button>
+    <button data-page="relatorios">📈 Relatórios</button>
+    <small>ACESSOS RÁPIDOS</small>
+    <button onclick="openStudentModal()">➕ Novo aluno</button>
+    <button onclick="openPaymentModal()">💵 Registrar pagamento</button>
+    <button onclick="openExpenseModal()">🧾 Nova despesa</button>
+  </div>
+</aside>
+
+<main class="content">
+<header class="top">
+  <div>
+    <button class="btn secondary mobile-menu" onclick="toggleSidebar()">☰ Menu</button>
+    <h1 id="pageTitle">Dashboard financeiro</h1>
+    <p>Escola de Futebol Vida Esportiva</p>
+  </div>
+  <div class="actions">
+    <button class="btn primary" onclick="openStudentModal()">+ Aluno</button>
+    <button class="btn blue" onclick="openPaymentModal()">+ Pagamento</button>
+  </div>
+</header>
+
+<section id="dashboard" class="page active">
+  <div class="cards">
+    <div class="card bluecard"><div class="label">Alunos cadastrados</div><div class="value" id="kpiAlunos">0</div></div>
+    <div class="card green"><div class="label">Recebido no mês</div><div class="value" id="kpiRecebido">R$ 0,00</div></div>
+    <div class="card red"><div class="label">Em atraso</div><div class="value" id="kpiAtrasado">R$ 0,00</div></div>
+    <div class="card yellow"><div class="label">Despesas no mês</div><div class="value" id="kpiDespesas">R$ 0,00</div></div>
+  </div>
+
+  <div class="grid2">
+    <div class="panel">
+      <h2>Resumo do mês</h2>
+      <div id="resumoMes"></div>
+    </div>
+    <div class="panel">
+      <h2>Pagamentos próximos / atrasados</h2>
+      <div id="proximosPagamentos"></div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>Últimos lançamentos</h2>
+    <div class="table-wrap"><table><thead><tr><th>Data</th><th>Descrição</th><th>Tipo</th><th>Valor</th></tr></thead><tbody id="ultimos"></tbody></table></div>
+  </div>
+</section>
+
+<section id="alunos" class="page">
+  <div class="panel">
+    <div class="searchbar">
+      <input id="buscaAluno" placeholder="Pesquisar aluno..." oninput="renderStudents()">
+      <button class="btn primary" onclick="openStudentModal()">+ Cadastrar aluno</button>
+    </div>
+    <div class="table-wrap"><table><thead><tr><th>Aluno</th><th>Responsável</th><th>Telefone</th><th>Categoria</th><th>Mensalidade</th><th>Vencimento</th><th>Status</th><th>Ações</th></tr></thead><tbody id="studentsTable"></tbody></table></div>
+  </div>
+</section>
+
+<section id="pagamentos" class="page">
+  <div class="panel">
+    <div class="searchbar">
+      <input id="buscaPagamento" placeholder="Pesquisar aluno ou referência..." oninput="renderPayments()">
+      <button class="btn primary" onclick="openPaymentModal()">+ Registrar pagamento</button>
+    </div>
+    <div class="table-wrap"><table><thead><tr><th>Data</th><th>Aluno</th><th>Referência</th><th>Valor</th><th>Status</th><th>Ações</th></tr></thead><tbody id="paymentsTable"></tbody></table></div>
+  </div>
+</section>
+
+<section id="despesas" class="page">
+  <div class="panel">
+    <div class="searchbar"><button class="btn primary" onclick="openExpenseModal()">+ Nova despesa</button></div>
+    <div class="table-wrap"><table><thead><tr><th>Data</th><th>Descrição</th><th>Categoria</th><th>Valor</th><th>Ações</th></tr></thead><tbody id="expensesTable"></tbody></table></div>
+  </div>
+</section>
+
+<section id="relatorios" class="page">
+  <div class="panel">
+    <h2>Relatório financeiro</h2>
+    <div id="report"></div>
+    <button class="btn secondary" onclick="window.print()">🖨️ Imprimir / salvar PDF</button>
+  </div>
+</section>
+</main>
+</div>
+
+<div class="modal" id="studentModal">
+<div class="modal-box">
+<div class="modal-head"><h2>Novo aluno</h2><button class="close" onclick="closeModal('studentModal')">✕</button></div>
+<form onsubmit="saveStudent(event)">
+<div class="form-grid">
+<div class="field"><label>Nome do aluno *</label><input id="sNome" required></div>
+<div class="field"><label>Responsável</label><input id="sResp"></div>
+<div class="field"><label>Telefone</label><input id="sTel" placeholder="(00) 00000-0000"></div>
+<div class="field"><label>Categoria</label><select id="sCat"><option>Sub-08</option><option>Sub-10</option><option>Sub-12</option><option>Sub-14</option><option>Sub-16</option><option>Sub-18</option></select></div>
+<div class="field"><label>Mensalidade (R$)</label><input id="sValor" type="number" step="0.01" value="154.90"></div>
+<div class="field"><label>Dia do vencimento</label><input id="sVenc" type="number" min="1" max="31" value="10"></div>
+</div>
+<br><button class="btn primary" type="submit">Salvar aluno</button>
+</form></div></div>
+
+<div class="modal" id="paymentModal">
+<div class="modal-box">
+<div class="modal-head"><h2>Registrar pagamento</h2><button class="close" onclick="closeModal('paymentModal')">✕</button></div>
+<form onsubmit="savePayment(event)">
+<div class="form-grid">
+<div class="field"><label>Aluno *</label><select id="pAluno" required></select></div>
+<div class="field"><label>Referência</label><input id="pRef" type="month" required></div>
+<div class="field"><label>Data do pagamento</label><input id="pData" type="date" required></div>
+<div class="field"><label>Valor (R$)</label><input id="pValor" type="number" step="0.01" required></div>
+</div><br><button class="btn primary" type="submit">Registrar pagamento</button>
+</form></div></div>
+
+<div class="modal" id="expenseModal">
+<div class="modal-box">
+<div class="modal-head"><h2>Nova despesa</h2><button class="close" onclick="closeModal('expenseModal')">✕</button></div>
+<form onsubmit="saveExpense(event)">
+<div class="form-grid">
+<div class="field"><label>Descrição *</label><input id="eDesc" required></div>
+<div class="field"><label>Categoria</label><select id="eCat"><option>Operacional</option><option>Campo</option><option>Material esportivo</option><option>Arbitragem</option><option>Publicidade</option><option>Outros</option></select></div>
+<div class="field"><label>Data</label><input id="eData" type="date" required></div>
+<div class="field"><label>Valor (R$)</label><input id="eValor" type="number" step="0.01" required></div>
+</div><br><button class="btn primary" type="submit">Salvar despesa</button>
+</form></div></div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const KEY='vida_esportiva_financeiro_v2';
+let db=JSON.parse(localStorage.getItem(KEY)||'null')||{students:[],payments:[],expenses:[]};
+
+function saveDB(){localStorage.setItem(KEY,JSON.stringify(db));renderAll()}
+function money(v){return Number(v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'})}
+function today(){return new Date().toISOString().slice(0,10)}
+function monthNow(){return today().slice(0,7)}
+function showToast(t){const x=document.getElementById('toast');x.textContent=t;x.classList.add('show');setTimeout(()=>x.classList.remove('show'),2200)}
+function openModal(id){document.getElementById(id).classList.add('show')}
+function closeModal(id){document.getElementById(id).classList.remove('show')}
+function openStudentModal(){openModal('studentModal')}
+function openPaymentModal(){
+  const s=document.getElementById('pAluno');
+  s.innerHTML=db.students.map(x=>`<option value="${x.id}">${esc(x.nome)}</option>`).join('');
+  document.getElementById('pRef').value=monthNow();document.getElementById('pData').value=today();
+  document.getElementById('pValor').value=db.students[0]?.valor||154.90;openModal('paymentModal')
+}
+function openExpenseModal(){document.getElementById('eData').value=today();openModal('expenseModal')}
+function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
+function id(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7)}
+function statusAluno(s){
+  const ym=monthNow(), paid=db.payments.some(p=>p.studentId===s.id&&p.ref===ym&&p.status==='pago');
+  if(paid)return ['Pago','pago'];
+  const d=new Date(); const venc=new Date(d.getFullYear(),d.getMonth(),Number(s.vencimento||10));
+  if(d>venc)return ['Atrasado','atrasado'];
+  return ['Pendente','pendente'];
+}
+function saveStudent(e){
+ e.preventDefault();
+ db.students.push({id:id(),nome:sNome.value.trim(),responsavel:sResp.value.trim(),telefone:sTel.value.trim(),categoria:sCat.value,valor:Number(sValor.value||0),vencimento:Number(sVenc.value||10),criado:today()});
+ saveDB();e.target.reset();sValor.value='154.90';sVenc.value='10';closeModal('studentModal');showToast('Aluno cadastrado com sucesso!');
+}
+function savePayment(e){
+ e.preventDefault();
+ const sid=pAluno.value; const aluno=db.students.find(x=>x.id===sid);
+ db.payments.push({id:id(),studentId:sid,aluno:aluno?.nome||'',ref:pRef.value,data:pData.value,valor:Number(pValor.value||0),status:'pago'});
+ saveDB();closeModal('paymentModal');showToast('Pagamento registrado!');
+}
+function saveExpense(e){
+ e.preventDefault();
+ db.expenses.push({id:id(),desc:eDesc.value.trim(),cat:eCat.value,data:eData.value,valor:Number(eValor.value||0)});
+ saveDB();closeModal('expenseModal');showToast('Despesa salva!');
+}
+function removeStudent(i){if(confirm('Excluir este aluno? Os pagamentos dele também serão excluídos.')){db.students.splice(i,1);db.payments=db.payments.filter(p=>p.studentId!==db.students[i]?.id);saveDB()}}
+function removePayment(i){if(confirm('Excluir este pagamento?')){db.payments.splice(i,1);saveDB()}}
+function removeExpense(i){if(confirm('Excluir esta despesa?')){db.expenses.splice(i,1);saveDB()}}
+function renderStudents(){
+ const q=(document.getElementById('buscaAluno')?.value||'').toLowerCase();
+ const rows=db.students.filter(s=>(s.nome+' '+s.responsavel+' '+s.telefone).toLowerCase().includes(q));
+ studentsTable.innerHTML=rows.length?rows.map(s=>{const st=statusAluno(s);return `<tr><td><b>${esc(s.nome)}</b></td><td>${esc(s.responsavel)}</td><td>${esc(s.telefone)}</td><td>${esc(s.categoria)}</td><td>${money(s.valor)}</td><td>Dia ${s.vencimento}</td><td><span class="badge ${st[1]}">${st[0]}</span></td><td><button class="btn secondary" onclick="whats('${esc(s.telefone)}','${esc(s.nome)}')">WhatsApp</button></td></tr>`}).join(''):'<tr><td colspan="8" class="empty">Nenhum aluno cadastrado.</td></tr>';
+}
+function renderPayments(){
+ const q=(document.getElementById('buscaPagamento')?.value||'').toLowerCase();
+ const rows=db.payments.filter(p=>(p.aluno+' '+p.ref).toLowerCase().includes(q)).sort((a,b)=>b.data.localeCompare(a.data));
+ paymentsTable.innerHTML=rows.length?rows.map((p,idx)=>`<tr><td>${p.data}</td><td>${esc(p.aluno)}</td><td>${p.ref}</td><td>${money(p.valor)}</td><td><span class="badge pago">Pago</span></td><td><button class="btn secondary" onclick="removePayment(${db.payments.indexOf(p)})">Excluir</button></td></tr>`).join(''):'<tr><td colspan="6" class="empty">Nenhum pagamento registrado.</td></tr>';
+}
+function renderExpenses(){
+ const rows=[...db.expenses].sort((a,b)=>b.data.localeCompare(a.data));
+ expensesTable.innerHTML=rows.length?rows.map(p=>`<tr><td>${p.data}</td><td>${esc(p.desc)}</td><td>${esc(p.cat)}</td><td>${money(p.valor)}</td><td><button class="btn secondary" onclick="removeExpense(${db.expenses.indexOf(p)})">Excluir</button></td></tr>`).join(''):'<tr><td colspan="5" class="empty">Nenhuma despesa registrada.</td></tr>';
+}
+function renderDashboard(){
+ const m=monthNow();
+ const recebido=db.payments.filter(p=>p.ref===m).reduce((a,p)=>a+Number(p.valor),0);
+ const despesas=db.expenses.filter(p=>p.data.slice(0,7)===m).reduce((a,p)=>a+Number(p.valor),0);
+ const atrasado=db.students.filter(s=>statusAluno(s)[1]==='atrasado').reduce((a,s)=>a+Number(s.valor),0);
+ kpiAlunos.textContent=db.students.length;kpiRecebido.textContent=money(recebido);kpiDespesas.textContent=money(despesas);kpiAtrasado.textContent=money(atrasado);
+ resumoMes.innerHTML=`<p><b>Receitas:</b> ${money(recebido)}</p><p><b>Despesas:</b> ${money(despesas)}</p><p><b>Saldo:</b> <strong>${money(recebido-despesas)}</strong></p><p><b>Inadimplência estimada:</b> ${money(atrasado)}</p>`;
+ const pend=db.students.filter(s=>statusAluno(s)[1]!=='pago').slice(0,8);
+ proximosPagamentos.innerHTML=pend.length?pend.map(s=>{const st=statusAluno(s);return `<p>⚽ <b>${esc(s.nome)}</b> — ${money(s.valor)} <span class="badge ${st[1]}">${st[0]}</span></p>`}).join(''):'<div class="empty">Todos os alunos do mês estão pagos.</div>';
+ const all=[...db.payments.map(x=>({data:x.data,desc:'Pagamento — '+x.aluno,tipo:'Receita',valor:x.valor})),...db.expenses.map(x=>({data:x.data,desc:x.desc,tipo:'Despesa',valor:-x.valor}))].sort((a,b)=>b.data.localeCompare(a.data)).slice(0,10);
+ ultimos.innerHTML=all.length?all.map(x=>`<tr><td>${x.data}</td><td>${esc(x.desc)}</td><td>${x.tipo}</td><td>${money(x.valor)}</td></tr>`).join(''):'<tr><td colspan="4" class="empty">Nenhum lançamento ainda.</td></tr>';
+}
+function renderReport(){
+ const receitas=db.payments.reduce((a,p)=>a+Number(p.valor),0), despesas=db.expenses.reduce((a,p)=>a+Number(p.valor),0);
+ report.innerHTML=`<div class="cards"><div class="card green"><div class="label">Receitas acumuladas</div><div class="value">${money(receitas)}</div></div><div class="card red"><div class="label">Despesas acumuladas</div><div class="value">${money(despesas)}</div></div><div class="card bluecard"><div class="label">Saldo</div><div class="value">${money(receitas-despesas)}</div></div><div class="card yellow"><div class="label">Alunos</div><div class="value">${db.students.length}</div></div></div>`;
+}
+function renderAll(){renderStudents();renderPayments();renderExpenses();renderDashboard();renderReport()}
+function whats(tel,nome){
+ const n=String(tel||'').replace(/\D/g,''); if(!n){showToast('Cadastre o telefone do responsável.');return}
+ const msg=encodeURIComponent(`Olá! Aqui é da Escola de Futebol Vida Esportiva. Estamos entrando em contato sobre a mensalidade de ${nome}.`);
+ window.open(`https://wa.me/55${n}?text=${msg}`,'_blank');
+}
+document.querySelectorAll('.nav button[data-page]').forEach(b=>b.addEventListener('click',()=>{
+ document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
+ document.getElementById(b.dataset.page).classList.add('active');
+ document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('active'));b.classList.add('active');
+ document.getElementById('pageTitle').textContent={dashboard:'Dashboard financeiro',alunos:'Cadastro de alunos',pagamentos:'Controle de pagamentos',despesas:'Controle de despesas',relatorios:'Relatórios financeiros'}[b.dataset.page];
+}));
+function toggleSidebar(){document.querySelector('.sidebar').style.display=document.querySelector('.sidebar').style.display==='block'?'none':'block'}
+renderAll();
+</script>
+</body>
+</html>
