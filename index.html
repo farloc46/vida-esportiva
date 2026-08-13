@@ -29,6 +29,293 @@ label{font-size:12px;font-weight:700;color:#344054;display:block;margin:0 0 5px}
 .mobile-menu{display:none}
 @media(max-width:1000px){.cards{grid-template-columns:repeat(3,1fr)}.grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:700px){.sidebar{display:none}.content{margin-left:0;width:100%;padding:12px}.mobile-menu{display:block}.cards{grid-template-columns:repeat(2,1fr)}.grid,.grid2{grid-template-columns:1fr}.top h1{font-size:20px}}
+/* ===== VIDA ESPORTIVA - NOVA IDENTIDADE VISUAL ===== */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+:root{
+  --primaria:#087443;
+  --primaria-escura:#05613a;
+  --verde:#159447;
+  --verde-claro:#22a447;
+  --fundo:#f3f5f7;
+  --branco:#ffffff;
+  --texto:#17202a;
+  --texto-secundario:#6b7280;
+  --borda:#e5e7eb;
+  --sombra:0 4px 15px rgba(0,0,0,.07);
+}
+
+/* ===== BASE ===== */
+
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  background:var(--fundo) !important;
+  color:var(--texto) !important;
+  font-family:'Inter',Arial,sans-serif !important;
+}
+
+/* ===== APLICAÇÃO ===== */
+
+.app{
+  background:var(--fundo) !important;
+  min-height:100vh;
+}
+
+/* ===== MENU LATERAL ===== */
+
+.sidebar{
+  background:var(--primaria-escura) !important;
+  color:white !important;
+}
+
+.brand{
+  color:white !important;
+  font-family:'Inter',Arial,sans-serif !important;
+  font-weight:800 !important;
+}
+
+.brand-icon{
+  background:white !important;
+  color:var(--primaria) !important;
+}
+
+.nav button{
+  color:white !important;
+  background:transparent !important;
+  border-radius:10px !important;
+  font-family:'Inter',Arial,sans-serif !important;
+  font-weight:500 !important;
+  transition:.2s ease;
+}
+
+.nav button:hover{
+  background:rgba(255,255,255,.12) !important;
+}
+
+.nav button.active{
+  background:var(--primaria) !important;
+  color:white !important;
+  font-weight:700 !important;
+}
+
+/* ===== ÁREA PRINCIPAL ===== */
+
+.content{
+  background:var(--fundo) !important;
+}
+
+.principal{
+  background:var(--fundo) !important;
+}
+
+/* ===== TOPO ===== */
+
+.top{
+  background:transparent !important;
+}
+
+.top h1,
+.top h2,
+.top h3{
+  font-family:'Inter',Arial,sans-serif !important;
+  font-weight:800 !important;
+  color:var(--texto) !important;
+}
+
+/* ===== BOTÕES ===== */
+
+button{
+  font-family:'Inter',Arial,sans-serif !important;
+}
+
+.btn,
+button.primary,
+.btn.primary{
+  background:var(--primaria) !important;
+  color:white !important;
+  border:none !important;
+  border-radius:10px !important;
+  font-weight:700 !important;
+  transition:.2s ease;
+}
+
+.btn:hover,
+button.primary:hover,
+.btn.primary:hover{
+  background:var(--primaria-escura) !important;
+  transform:translateY(-1px);
+}
+
+/* ===== CARTÕES ===== */
+
+.cards{
+  gap:16px !important;
+}
+
+.card,
+.cards .card,
+.panel{
+  background:var(--branco) !important;
+  border:1px solid var(--borda) !important;
+  border-radius:18px !important;
+  box-shadow:var(--sombra) !important;
+}
+
+/* ===== KPIs / INDICADORES ===== */
+
+.kpi,
+.kpi-green{
+  background:var(--branco) !important;
+  border-radius:18px !important;
+  box-shadow:var(--sombra) !important;
+}
+
+.kpi-green{
+  border-left:5px solid var(--verde) !important;
+}
+
+/* ===== VALORES ===== */
+
+.kpi strong,
+.kpi b,
+.kpi .value,
+.amount,
+.money{
+  color:var(--texto) !important;
+  font-weight:800 !important;
+}
+
+/* ===== TABELAS ===== */
+
+.table-wrap{
+  background:white !important;
+  border-radius:16px !important;
+  border:1px solid var(--borda) !important;
+  box-shadow:var(--sombra) !important;
+  overflow:auto;
+}
+
+table{
+  background:white !important;
+  border-collapse:collapse;
+}
+
+thead th,
+th{
+  background:var(--primaria) !important;
+  color:white !important;
+  font-weight:700 !important;
+}
+
+td{
+  color:var(--texto) !important;
+}
+
+/* ===== ETIQUETAS / STATUS ===== */
+
+.badge{
+  border-radius:999px !important;
+  font-family:'Inter',Arial,sans-serif !important;
+  font-weight:700 !important;
+}
+
+/* ===== FORMULÁRIOS ===== */
+
+input,
+select,
+textarea{
+  font-family:'Inter',Arial,sans-serif !important;
+  background:white !important;
+  color:var(--texto) !important;
+  border:1px solid #d1d5db !important;
+  border-radius:10px !important;
+}
+
+input:focus,
+select:focus,
+textarea:focus{
+  border-color:var(--primaria) !important;
+  outline:none !important;
+  box-shadow:0 0 0 3px rgba(8,116,67,.12) !important;
+}
+
+/* ===== BARRA DE PESQUISA ===== */
+
+.searchbar{
+  background:white !important;
+  border-radius:12px !important;
+}
+
+/* ===== GRÁFICOS ===== */
+
+.chart{
+  background:white !important;
+  border-radius:18px !important;
+  border:1px solid var(--borda) !important;
+  box-shadow:var(--sombra) !important;
+}
+
+/* ===== MODAIS ===== */
+
+.modal{
+  font-family:'Inter',Arial,sans-serif !important;
+}
+
+.modal > div{
+  border-radius:18px !important;
+}
+
+/* ===== TOAST / AVISOS ===== */
+
+.toast{
+  border-radius:12px !important;
+  font-family:'Inter',Arial,sans-serif !important;
+}
+
+/* ===== TÍTULOS ===== */
+
+h1,h2,h3,h4,h5,h6{
+  font-family:'Inter',Arial,sans-serif !important;
+  color:var(--texto) !important;
+}
+
+label{
+  font-family:'Inter',Arial,sans-serif !important;
+}
+
+/* ===== RESPONSIVIDADE ===== */
+
+@media(max-width:700px){
+
+  .content{
+    margin-left:0 !important;
+    width:100% !important;
+  }
+
+  .cards{
+    grid-template-columns:1fr !important;
+  }
+
+  .card,
+  .panel,
+  .kpi{
+    border-radius:16px !important;
+  }
+
+  .top{
+    gap:10px !important;
+    flex-wrap:wrap !important;
+  }
+
+  button{
+    min-height:42px;
+  }
+}
 </style>
 </head>
 <body>
