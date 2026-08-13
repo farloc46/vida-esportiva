@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vida Esportiva • Gestão Financeira</title>
+<style>
+:root{
+  --verde:#087443;--verde2:#05613a;--verde3:#159447;--fundo:#f3f5f7;
+  --branco:#fff;--texto:#17202a;--muted:#6b7280;--linha:#e5e7eb;
+  --vermelho:#d63345;--amarelo:#f0ad00;--azul:#1769d1;
+  --sombra:0 4px 15px rgba(0,0,0,.07)
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--fundo);color:var(--texto);font-family:Arial,Helvetica,sans-serif}
+button,input,select{font:inherit}
+button{cursor:pointer}
+.hidden{display:none!important}
+
+/* LOGIN */
+.login-screen{
+  min-height:100vh;display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(135deg,#0756a8,#1769d1);padding:20px
+}
+.login-box{
+  width:min(390px,100%);background:#fff;border-radius:18px;padding:28px;
+  box-shadow:0 15px 45px rgba(0,0,0,.22)
+}
+.logo-ball{font-size:42px}
+.login-box h1{margin:6px 0 4px;font-size:25px}
+.login-box p{color:var(--muted);font-size:13px}
+.login-box label{display:block;font-size:12px;font-weight:700;margin-top:14px}
+.login-box input{width:100%;padding:12px;border:1px solid var(--linha);border-radius:8px;margin-top:5px}
+.btn{border:0;border-radius:8px;padding:11px 14px;font-weight:700}
+.btn-primary{background:var(--verde);color:#fff}
+.btn-secondary{background:#eef2f4;color:var(--texto)}
+.btn-danger{background:var(--vermelho);color:#fff}
+.login-box .btn{width:100%;margin-top:16px}
+.login-hint{font-size:11px!important;margin-top:12px}
+
+/* APP */
+.app{display:flex;min-height:100vh}
+.sidebar{
+  width:245px;background:var(--verde2);color:#fff;position:fixed;inset:0 auto 0 0;
+  z-index:20;padding:18px 12px;overflow:auto
+}
+.brand{display:flex;align-items:center;gap:9px;padding:8px 7px 20px;font-weight:800;font-size:18px}
+.brand small{display:block;font-size:10px;font-weight:400;opacity:.8}
+.nav button{
+  display:block;width:100%;text-align:left;background:transparent;border:0;color:#fff;
+  padding:12px;border-radius:8px;margin:3px 0
+}
+.nav button:hover,.nav button.active{background:rgba(255,255,255,.12)}
+.sidebar-bottom{position:absolute;bottom:15px;left:15px;right:15px;font-size:10px;opacity:.65}
+.content{margin-left:245px;width:calc(100% - 245px);padding:22px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:18px}
+.top h2{margin:0;font-size:24px}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.card{background:#fff;border:1px solid var(--linha);border-radius:12px;padding:16px;box-shadow:var(--sombra)}
+.card .label{font-size:12px;color:var(--muted);font-weight:700}
+.card .value{font-size:25px;font-weight:800;margin-top:7px}
+.panel{background:#fff;border:1px solid var(--linha);border-radius:12px;padding:16px;margin-top:14px;box-shadow:var(--sombra)}
+.panel h3{margin:0 0 12px}
+.searchbar{display:flex;gap:8px;flex-wrap:wrap}
+.searchbar input,.searchbar select,.form-grid input,.form-grid select{
+  border:1px solid var(--linha);border-radius:8px;padding:10px;background:#fff
+}
+.searchbar input{flex:1;min-width:180px}
+.table-wrap{overflow:auto}
+table{width:100%;border-collapse:collapse;min-width:720px}
+th,td{padding:10px 11px;border-bottom:1px solid var(--linha);text-align:left;font-size:13px}
+th{background:#f7f9fa;font-size:12px}
+.badge{display:inline-block;padding:5px 8px;border-radius:999px;font-size:11px;font-weight:700}
+.pago{background:#dcf7e8;color:#087443}.pendente{background:#fff3cd;color:#856404}
+.atrasado{background:#fde2e5;color:#a51e2b}
+.form-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.form-grid label{font-size:12px;font-weight:700}
+.form-grid input,.form-grid select{width:100%;margin-top:5px}
+.form-full{grid-column:1/-1}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:50;display:none;align-items:center;justify-content:center;padding:15px}
+.modal.show{display:flex}
+.modal-box{background:#fff;width:min(760px,100%);max-height:92vh;overflow:auto;border-radius:14px;padding:20px}
+.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.close{border:0;background:#eee;border-radius:50%;width:34px;height:34px}
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.notice{padding:12px;border-radius:9px;background:#eef6ff;color:#145da0;font-size:13px}
+.toast{position:fixed;right:18px;bottom:18px;background:#17202a;color:#fff;padding:12px 15px;border-radius:9px;z-index:100;display:none}
+.mobile-menu{display:none}
+
+/* MOBILE */
+@media(max-width:1000px){
+  .cards{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:700px){
+  .sidebar{display:none}.content{margin-left:0;width:100%;padding:14px}
+  .mobile-menu{display:block;background:var(--verde);color:#fff;border:0;border-radius:8px;padding:10px 13px}
+  .top{align-items:flex-start}.top h2{font-size:20px}
+  .cards{grid-template-columns:1fr 1fr}.form-grid{grid-template-columns:1fr}.form-full{grid-column:auto}
+  .kpis{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<div id="loginScreen" class="login-screen">
+  <div class="login-box">
+    <div class="logo-ball">⚽</div>
+    <h1>Vida Esportiva</h1>
+    <p>Acesso ao sistema financeiro</p>
+    <label>Usuário</label>
+    <input id="loginUser" value="admin" autocomplete="username">
+    <label>Senha</label>
+    <input id="loginPass" type="password" value="1234" autocomplete="current-password">
+    <button class="btn btn-primary" onclick="login()">Entrar</button>
+    <p class="login-hint">Protótipo: usuário <b>admin</b> e senha <b>1234</b>. Para produção, a autenticação deve ficar no servidor.</p>
+  </div>
+</div>
+
+<div id="app" class="app hidden">
+  <aside class="sidebar">
+    <div class="brand">⚽ <span>Vida Esportiva<small>Gestão Financeira</small></span></div>
+    <nav class="nav">
+      <button data-page="dashboard" onclick="showPage('dashboard')">📊 Dashboard</button>
+      <button data-page="alunos" onclick="showPage('alunos')">👥 Alunos</button>
+      <button data-page="mensalidades" onclick="showPage('mensalidades')">💰 Mensalidades</button>
+      <button data-page="cobrancas" onclick="showPage('cobrancas')">📲 Cobranças</button>
+      <button data-page="relatorios" onclick="showPage('relatorios')">📄 Relatórios</button>
+      <button data-page="config" onclick="showPage('config')">⚙️ Configurações</button>
+    </nav>
+    <div class="sidebar-bottom">Versão completa • protótipo web</div>
+  </aside>
+
+  <main class="content">
+    <div class="top">
+      <div>
+        <button class="mobile-menu" onclick="toggleMobileNav()">☰ Menu</button>
+        <h2 id="pageTitle">Dashboard</h2>
+      </div>
+      <div class="actions">
+        <button class="btn btn-secondary" onclick="backup()">↓ Backup</button>
+        <button class="btn btn-primary" onclick="openAluno()">+ Novo aluno</button>
+        <button class="btn btn-danger" onclick="logout()">Sair</button>
+      </div>
+    </div>
+    <div id="page"></div>
+  </main>
+</div>
+
+<div id="modal" class="modal">
+  <div class="modal-box">
+    <div class="modal-head"><h3 id="modalTitle">Novo aluno</h3><button class="close" onclick="closeModal()">×</button></div>
+    <div id="modalBody"></div>
+  </div>
+</div>
+<div id="toast" class="toast"></div>
+
+<script>
+const KEY='vida_esportiva_dados_v2';
+
+const defaultData={
+  config:{mensalidade:154.90,diaVencimento:10,nome:'Vida Esportiva'},
+  alunos:[]
+};
+
+let data=loadData();
+let currentPage='dashboard';
+let editingId=null;
+
+function loadData(){
+  try{
+    const saved=localStorage.getItem(KEY);
+    if(saved)return JSON.parse(saved);
+  }catch(e){}
+  return structuredClone(defaultData);
+}
+function saveData(){localStorage.setItem(KEY,JSON.stringify(data))}
+function money(v){return Number(v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'})}
+function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7)}
+
+function login(){
+  const u=document.getElementById('loginUser').value.trim();
+  const p=document.getElementById('loginPass').value;
+  if(u==='admin'&&p==='1234'){
+    sessionStorage.setItem('ve_login','1');
+    document.getElementById('loginScreen').classList.add('hidden');
+    document.getElementById('app').classList.remove('hidden');
+    showPage('dashboard');
+  }else alert('Usuário ou senha inválidos.');
+}
+function logout(){
+  sessionStorage.removeItem('ve_login');
+  document.getElementById('app').classList.add('hidden');
+  document.getElementById('loginScreen').classList.remove('hidden');
+}
+function init(){
+  if(sessionStorage.getItem('ve_login')==='1'){
+    document.getElementById('loginScreen').classList.add('hidden');
+    document.getElementById('app').classList.remove('hidden');
+    showPage('dashboard');
+  }else{
+    document.getElementById('loginPass').addEventListener('keydown',e=>{if(e.key==='Enter')login()});
+  }
+}
+function showPage(page){
+  currentPage=page;
+  const titles={dashboard:'Dashboard',alunos:'Alunos',mensalidades:'Mensalidades',cobrancas:'Cobranças',relatorios:'Relatórios',config:'Configurações'};
+  document.getElementById('pageTitle').textContent=titles[page]||'Dashboard';
+  document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('active',b.dataset.page===page));
+  const render={dashboard:renderDashboard,alunos:renderAlunos,mensalidades:renderMensalidades,cobrancas:renderCobrancas,relatorios:renderRelatorios,config:renderConfig};
+  render[page]();
+}
+function toggleMobileNav(){
+  const s=document.querySelector('.sidebar');
+  s.style.display=s.style.display==='block'?'none':'block';
+  if(s.style.display==='block')s.style.position='fixed';
+}
+
+function statusAluno(a){
+  if(a.status==='Pago')return 'pago';
+  if(!a.vencimento)return 'pendente';
+  const hoje=new Date(); hoje.setHours(0,0,0,0);
+  const [y,m,d]=a.vencimento.split('-').map(Number);
+  const v=new Date(y,m-1,d); v.setHours(0,0,0,0);
+  return v<hoje?'atrasado':'pendente';
+}
+function statusText(a){
+  const s=statusAluno(a);
+  return s==='pago'?'Pago':s==='atrasado'?'Atrasado':'Pendente';
+}
+function totalReceber(){
+  return data.alunos.filter(a=>statusAluno(a)!=='pago').reduce((s,a)=>s+Number(a.mensalidade||0),0)
+}
+function renderDashboard(){
+  const total=data.alunos.length;
+  const pagos=data.alunos.filter(a=>statusAluno(a)==='pago').length;
+  const atrasados=data.alunos.filter(a=>statusAluno(a)==='atrasado').length;
+  const receber=totalReceber();
+  document.getElementById('page').innerHTML=`
+    <div class="cards">
+      <div class="card"><div class="label">ALUNOS</div><div class="value">${total}</div></div>
+      <div class="card"><div class="label">PAGAMENTOS OK</div><div class="value">${pagos}</div></div>
+      <div class="card"><div class="label">EM ATRASO</div><div class="value">${atrasados}</div></div>
+      <div class="card"><div class="label">A RECEBER</div><div class="value">${money(receber)}</div></div>
+    </div>
+    <div class="panel">
+      <h3>Resumo financeiro</h3>
+      <div class="kpis">
+        <div class="notice">Mensalidade padrão: <b>${money(data.config.mensalidade)}</b></div>
+        <div class="notice">Vencimento padrão: <b>dia ${data.config.diaVencimento}</b></div>
+        <div class="notice">Dados salvos automaticamente neste aparelho.</div>
+      </div>
+    </div>
+    <div class="panel">
+      <h3>Últimos alunos</h3>
+      ${miniTable(data.alunos.slice(-8).reverse())}
+    </div>`;
+}
+function miniTable(arr){
+  if(!arr.length)return '<p>Nenhum aluno cadastrado.</p>';
+  return `<div class="table-wrap"><table><thead><tr><th>Aluno</th><th>Categoria</th><th>Vencimento</th><th>Mensalidade</th><th>Status</th></tr></thead><tbody>
+  ${arr.map(a=>`<tr><td>${esc(a.nome)}</td><td>${esc(a.categoria)}</td><td>${formatDate(a.vencimento)}</td><td>${money(a.mensalidade)}</td><td><span class="badge ${statusAluno(a)}">${statusText(a)}</span></td></tr>`).join('')}
+  </tbody></table></div>`;
+}
+function renderAlunos(){
+  document.getElementById('page').innerHTML=`
+    <div class="panel">
+      <div class="searchbar">
+        <input id="searchAluno" placeholder="Pesquisar aluno, WhatsApp ou categoria" oninput="filterAlunos()">
+        <select id="filterStatus" onchange="filterAlunos()"><option value="">Todos</option><option>Pago</option><option>Pendente</option><option>Atrasado</option></select>
+      </div>
+      <div id="alunoTable" style="margin-top:12px">${alunoTable(data.alunos)}</div>
+    </div>`;
+}
+function alunoTable(arr){
+  if(!arr.length)return '<p>Nenhum aluno cadastrado.</p>';
+  return `<div class="table-wrap"><table><thead><tr><th>Aluno</th><th>Categoria</th><th>Entrada</th><th>Venc.</th><th>Mensalidade</th><th>Status</th><th>Ações</th></tr></thead><tbody>
+  ${arr.map(a=>`<tr>
+  <td><b>${esc(a.nome)}</b><br><small>${esc(a.whatsapp||'')}</small></td>
+  <td>${esc(a.categoria||'')}</td><td>${formatDate(a.entrada)}</td><td>${formatDate(a.vencimento)}</td>
+  <td>${money(a.mensalidade)}</td><td><span class="badge ${statusAluno(a)}">${statusText(a)}</span></td>
+  <td><button class="btn btn-secondary" onclick="openAluno('${a.id}')">Editar</button>
+  <button class="btn btn-primary" onclick="markPaid('${a.id}')">Pago</button>
+  <button class="btn btn-danger" onclick="deleteAluno('${a.id}')">Excluir</button></td>
+  </tr>`).join('')}
+  </tbody></table></div>`;
+}
+function filterAlunos(){
+  const q=(document.getElementById('searchAluno').value||'').toLowerCase();
+  const st=document.getElementById('filterStatus').value;
+  const arr=data.alunos.filter(a=>
+    (!q||[a.nome,a.whatsapp,a.categoria].join(' ').toLowerCase().includes(q))&&
+    (!st||statusText(a)===st)
+  );
+  document.getElementById('alunoTable').innerHTML=alunoTable(arr);
+}
+function openAluno(id=null){
+  editingId=id;
+  const a=id?data.alunos.find(x=>x.id===id):{nome:'',categoria:'',entrada:today(),vencimento:dueDate(today(),data.config.diaVencimento),mensalidade:data.config.mensalidade,whatsapp:'',observacoes:'',status:'Pendente'};
+  document.getElementById('modalTitle').textContent=id?'Editar aluno':'Novo aluno';
+  document.getElementById('modalBody').innerHTML=`
+    <div class="form-grid">
+      <label>Nome completo<input id="fNome" value="${esc(a.nome)}"></label>
+      <label>Categoria<select id="fCat">${['5-6 anos','7-8 anos','9-10 anos','11-12 anos','13-14 anos','15-17 anos'].map(x=>`<option ${x===a.categoria?'selected':''}>${x}</option>`).join('')}</select></label>
+      <label>Data de entrada<input id="fEntrada" type="date" value="${a.entrada||''}" onchange="document.getElementById('fVenc').value=dueDate(this.value, data.config.diaVencimento)"></label>
+      <label>Vencimento<input id="fVenc" type="date" value="${a.vencimento||''}"></label>
+      <label>Mensalidade<input id="fValor" type="number" step="0.01" value="${Number(a.mensalidade||0)}"></label>
+      <label>WhatsApp<input id="fWhats" placeholder="(00) 00000-0000" value="${esc(a.whatsapp||'')}"></label>
+      <label class="form-full">Observações<input id="fObs" value="${esc(a.observacoes||'')}"></label>
+    </div>
+    <div class="actions" style="margin-top:16px">
+      <button class="btn btn-primary" onclick="saveAluno()">Salvar aluno</button>
+      <button class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+    </div>`;
+  document.getElementById('modal').classList.add('show');
+}
+function saveAluno(){
+  const nome=document.getElementById('fNome').value.trim();
+  if(!nome){alert('Informe o nome do aluno.');return}
+  const obj={
+    id:editingId||uid(),nome,categoria:document.getElementById('fCat').value,
+    entrada:document.getElementById('fEntrada').value,vencimento:document.getElementById('fVenc').value,
+    mensalidade:Number(document.getElementById('fValor').value||data.config.mensalidade),
+    whatsapp:document.getElementById('fWhats').value.trim(),observacoes:document.getElementById('fObs').value.trim(),
+    status:editingId?(data.alunos.find(x=>x.id===editingId)?.status||'Pendente'):'Pendente'
+  };
+  if(editingId)data.alunos=data.alunos.map(x=>x.id===editingId?obj:x);else data.alunos.push(obj);
+  saveData();closeModal();toast('Aluno salvo com sucesso.');showPage(currentPage);
+}
+function deleteAluno(id){
+  if(!confirm('Excluir este aluno?'))return;
+  data.alunos=data.alunos.filter(a=>a.id!==id);saveData();showPage(currentPage);toast('Aluno excluído.');
+}
+function markPaid(id){
+  const a=data.alunos.find(x=>x.id===id);if(!a)return;
+  a.status='Pago';a.ultimoPagamento=today();saveData();showPage(currentPage);toast('Pagamento registrado.');
+}
+function renderMensalidades(){
+  const pago=data.alunos.filter(a=>statusAluno(a)==='pago').reduce((s,a)=>s+Number(a.mensalidade),0);
+  const pend=data.alunos.filter(a=>statusAluno(a)==='pendente').reduce((s,a)=>s+Number(a.mensalidade),0);
+  const atr=data.alunos.filter(a=>statusAluno(a)==='atrasado').reduce((s,a)=>s+Number(a.mensalidade),0);
+  document.getElementById('page').innerHTML=`
+  <div class="cards">
+    <div class="card"><div class="label">PAGO</div><div class="value">${money(pago)}</div></div>
+    <div class="card"><div class="label">PENDENTE</div><div class="value">${money(pend)}</div></div>
+    <div class="card"><div class="label">ATRASADO</div><div class="value">${money(atr)}</div></div>
+    <div class="card"><div class="label">TOTAL PREVISTO</div><div class="value">${money(pago+pend+atr)}</div></div>
+  </div>
+  <div class="panel"><h3>Controle de mensalidades</h3>${miniTable(data.alunos)}</div>`;
+}
+function renderCobrancas(){
+  const atrasados=data.alunos.filter(a=>statusAluno(a)==='atrasado');
+  document.getElementById('page').innerHTML=`
+    <div class="panel"><h3>Cobranças pendentes</h3>
+      <div class="notice">Nesta versão hospedada no GitHub Pages, o sistema prepara as mensagens, mas o envio automático pelo WhatsApp depende de uma integração/servidor externo.</div>
+      <div class="table-wrap" style="margin-top:12px"><table><thead><tr><th>Aluno</th><th>Valor</th><th>Dias</th><th>Ação</th></tr></thead><tbody>
+      ${atrasados.length?atrasados.map(a=>`<tr><td>${esc(a.nome)}</td><td>${money(a.mensalidade)}</td><td>${daysLate(a.vencimento)}</td><td><button class="btn btn-primary" onclick="whats('${a.id}')">📲 Abrir WhatsApp</button></td></tr>`).join(''):'<tr><td colspan="4">Nenhuma cobrança atrasada.</td></tr>'}
+      </tbody></table></div>
+    </div>`;
+}
+function whats(id){
+  const a=data.alunos.find(x=>x.id===id);if(!a)return;
+  const num=(a.whatsapp||'').replace(/\D/g,'');
+  const msg=`Olá! Tudo bem? Aqui é da Escola de Futebol Vida Esportiva. A mensalidade de ${a.nome}, no valor de ${money(a.mensalidade)}, está pendente. Podemos verificar o pagamento?`;
+  if(!num){alert('Este aluno não possui WhatsApp cadastrado.');return}
+  window.open('https://wa.me/55'+num+'?text='+encodeURIComponent(msg),'_blank');
+}
+function renderRelatorios(){
+  document.getElementById('page').innerHTML=`
+  <div class="panel"><h3>Relatório financeiro</h3>
+  <div class="kpis">
+    <div class="notice">Alunos: <b>${data.alunos.length}</b></div>
+    <div class="notice">Recebido: <b>${money(data.alunos.filter(a=>statusAluno(a)==='pago').reduce((s,a)=>s+Number(a.mensalidade),0))}</b></div>
+    <div class="notice">A receber: <b>${money(totalReceber())}</b></div>
+  </div>
+  <div style="margin-top:14px"><button class="btn btn-primary" onclick="printReport()">🖨️ Imprimir relatório</button></div>
+  </div>`;
+}
+function printReport(){
+  const w=window.open('','_blank');
+  w.document.write(`<html><head><title>Relatório Vida Esportiva</title><style>body{font-family:Arial;padding:30px}table{width:100%;border-collapse:collapse}td,th{padding:8px;border-bottom:1px solid #ddd;text-align:left}</style></head><body><h1>Vida Esportiva</h1><p>Relatório financeiro</p>${miniTable(data.alunos)}</body></html>`);
+  w.document.close();w.print();
+}
+function renderConfig(){
+  document.getElementById('page').innerHTML=`
+  <div class="panel"><h3>Configurações financeiras</h3>
+    <div class="form-grid">
+      <label>Nome<input id="cfgNome" value="${esc(data.config.nome)}"></label>
+      <label>Mensalidade padrão<input id="cfgValor" type="number" step="0.01" value="${data.config.mensalidade}"></label>
+      <label>Dia padrão de vencimento<input id="cfgDia" type="number" min="1" max="28" value="${data.config.diaVencimento}"></label>
+    </div>
+    <div class="actions" style="margin-top:16px"><button class="btn btn-primary" onclick="saveConfig()">Salvar configurações</button></div>
+  </div>
+  <div class="panel"><h3>Dados</h3>
+    <button class="btn btn-secondary" onclick="backup()">⬇️ Exportar backup</button>
+    <button class="btn btn-danger" onclick="clearData()">Apagar todos os dados</button>
+  </div>`;
+}
+function saveConfig(){
+  data.config.nome=document.getElementById('cfgNome').value.trim()||'Vida Esportiva';
+  data.config.mensalidade=Number(document.getElementById('cfgValor').value||154.90);
+  data.config.diaVencimento=Math.min(28,Math.max(1,Number(document.getElementById('cfgDia').value||10)));
+  saveData();toast('Configurações salvas.');showPage('config');
+}
+function backup(){
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download='backup-vida-esportiva-'+today()+'.json';a.click();URL.revokeObjectURL(a.href);
+  toast('Backup exportado.');
+}
+function clearData(){
+  if(!confirm('Isso apagará todos os alunos e configurações deste aparelho. Continuar?'))return;
+  data=structuredClone(defaultData);saveData();showPage('dashboard');toast('Dados apagados.');
+}
+function closeModal(){document.getElementById('modal').classList.remove('show')}
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.style.display='block';setTimeout(()=>t.style.display='none',2500)}
+function today(){return new Date().toISOString().slice(0,10)}
+function dueDate(base,dia){
+  const d=new Date(base+'T12:00:00');d.setDate(1);d.setMonth(d.getMonth()+1);d.setDate(Math.min(Number(dia)||10,28));
+  return d.toISOString().slice(0,10)
+}
+function formatDate(s){if(!s)return '-';const [y,m,d]=s.split('-');return `${d}/${m}/${y}`}
+function daysLate(s){
+  if(!s)return 0;const [y,m,d]=s.split('-').map(Number);const v=new Date(y,m-1,d);v.setHours(0,0,0,0);
+  const h=new Date();h.setHours(0,0,0,0);return Math.max(0,Math.floor((h-v)/86400000))
+}
+init();
+</script>
+</body>
+</html>
