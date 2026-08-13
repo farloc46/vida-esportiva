@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Vida Esportiva • Gestão Financeira</title>
+<style>
+:root{--primary:#0756b8;--primary2:#0b3d91;--green:#198754;--yellow:#d99a00;--red:#d63345;--ink:#17202a;--muted:#667085;--bg:#f5f7fb;--card:#fff;--line:#e5e7eb;--shadow:0 5px 18px #10182812}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,Arial,sans-serif;background:var(--bg);color:var(--ink)}
+button,input,select{font:inherit}button{cursor:pointer}
+.app{display:flex;min-height:100vh}.sidebar{width:245px;background:#0b3d91;color:#fff;padding:18px 12px;position:fixed;inset:0 auto 0 0;z-index:20}
+.brand{display:flex;align-items:center;gap:10px;padding:10px 8px 22px}.brand-icon{width:42px;height:42px;border-radius:12px;background:#fff;color:#0b3d91;display:grid;place-items:center;font-size:22px;font-weight:800}.brand b{font-size:17px}.brand small{display:block;opacity:.75;margin-top:2px}
+.nav button{width:100%;text-align:left;border:0;background:transparent;color:#fff;padding:12px 13px;border-radius:9px;margin:3px 0;font-weight:600}.nav button:hover,.nav button.active{background:#ffffff1c}
+.content{margin-left:245px;width:calc(100% - 245px);padding:20px;max-width:1600px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:18px}.top h1{margin:0;font-size:25px}.top p{margin:5px 0;color:var(--muted)}
+.actions{display:flex;gap:8px;flex-wrap:wrap}.btn{border:0;border-radius:9px;padding:10px 14px;font-weight:700}.primary{background:var(--primary);color:#fff}.success{background:var(--green);color:#fff}.danger{background:var(--red);color:#fff}.soft{background:#e9eef7;color:#1f2937}.warning{background:#fff1c2;color:#6b4b00}
+.cards{display:grid;grid-template-columns:repeat(5,minmax(150px,1fr));gap:12px;margin-bottom:18px}.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;box-shadow:var(--shadow)}.card .label{font-size:12px;color:var(--muted)}.card .value{font-size:24px;font-weight:800;margin-top:7px}.card .sub{font-size:11px;color:var(--muted);margin-top:5px}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.panel{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px;box-shadow:var(--shadow);margin-bottom:16px}.panel h2{font-size:17px;margin:0 0 14px}.panel-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+label{font-size:12px;font-weight:700;color:#344054;display:block;margin:0 0 5px}input,select{width:100%;padding:10px;border:1px solid #d0d5dd;border-radius:9px;background:#fff;outline:none}input:focus,select:focus{border-color:var(--primary);box-shadow:0 0 0 3px #0756b81a}
+.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:12px}table{width:100%;border-collapse:collapse;min-width:1000px}th,td{padding:10px 11px;border-bottom:1px solid var(--line);font-size:12px;text-align:left;vertical-align:middle}th{background:#f8fafc;color:#475467;position:sticky;top:0;z-index:1}.row-actions{display:flex;gap:5px;flex-wrap:wrap}.mini{padding:7px 9px;font-size:11px;border-radius:7px}
+.badge{display:inline-block;padding:5px 8px;border-radius:999px;font-size:10px;font-weight:800}.paid{background:#d1e7dd;color:#0f5132}.pending{background:#fff3cd;color:#664d03}.late{background:#f8d7da;color:#842029}.active-b{background:#d1e7dd;color:#0f5132}.inactive-b{background:#e9ecef;color:#495057}
+.kpi-green{border-left:4px solid var(--green)}.kpi-yellow{border-left:4px solid var(--yellow)}.kpi-red{border-left:4px solid var(--red)}.kpi-blue{border-left:4px solid var(--primary)}
+.chart{height:230px;display:flex;align-items:flex-end;gap:18px;padding:15px 10px;border-top:1px solid var(--line)}.bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%}.bar{width:min(48px,70%);background:var(--primary);border-radius:6px 6px 0 0;min-height:2px}.bar-label{font-size:10px;color:var(--muted);margin-top:6px}.bar-value{font-size:10px;margin-bottom:4px;font-weight:700}
+.searchbar{display:flex;gap:8px;flex-wrap:wrap}.searchbar input{flex:1;min-width:180px}.hidden{display:none!important}.empty{text-align:center;color:var(--muted);padding:28px}.hint{padding:11px 12px;border-left:4px solid var(--primary);background:#eef5ff;border-radius:8px;font-size:12px;margin-bottom:12px}
+.modal{position:fixed;inset:0;background:#0008;display:none;align-items:center;justify-content:center;z-index:50;padding:15px}.modal.open{display:flex}.modal-box{background:#fff;width:min(760px,100%);max-height:92vh;overflow:auto;border-radius:16px;padding:18px}.modal-head{display:flex;justify-content:space-between;align-items:center}.close{border:0;background:#eee;border-radius:50%;width:34px;height:34px}
+.toast{position:fixed;right:18px;bottom:18px;background:#17202a;color:#fff;padding:12px 15px;border-radius:10px;display:none;z-index:100}.toast.show{display:block}
+.login{position:fixed;inset:0;background:linear-gradient(135deg,#0b3d91,#0756b8);display:flex;align-items:center;justify-content:center;z-index:200}.login-box{background:#fff;border-radius:18px;padding:28px;width:min(390px,92%);box-shadow:0 15px 50px #0004}.login-box h1{margin:0}.login-box p{color:var(--muted);font-size:13px}.login-box .btn{width:100%;margin-top:10px}
+.mobile-menu{display:none}
+@media(max-width:1000px){.cards{grid-template-columns:repeat(3,1fr)}.grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:700px){.sidebar{display:none}.content{margin-left:0;width:100%;padding:12px}.mobile-menu{display:block}.cards{grid-template-columns:repeat(2,1fr)}.grid,.grid2{grid-template-columns:1fr}.top h1{font-size:20px}}
+</style>
+</head>
+<body>
+
+<div id="startupFallback" style="position:fixed;inset:0;background:#0b3d91;color:#fff;z-index:300;display:flex;align-items:center;justify-content:center;padding:20px;text-align:center;font-family:Arial">
+      <div><div style="font-size:48px">⚽</div><h2>Vida Esportiva</h2><p>Carregando o sistema...</p></div>
+    </div>
+    <div id="login" class="login">
+  <div class="login-box">
+    <div style="font-size:35px">⚽</div>
+    <h1>Vida Esportiva</h1>
+    <p>Acesso ao sistema financeiro.</p>
+    <label>Usuário</label><input id="loginUser" value="admin">
+    <label style="margin-top:10px">Senha</label><input id="loginPass" type="password" value="1234">
+    <button class="btn primary" onclick="login()">Entrar</button>
+    <p style="font-size:11px">Protótipo: usuário <b>admin</b> e senha <b>1234</b>. Em produção, o login deverá ser substituído por autenticação segura no servidor.</p>
+  </div>
+</div>
+
+<div class="app">
+<aside class="sidebar">
+  <div class="brand"><div class="brand-icon">⚽</div><div><b>Vida Esportiva</b><small>Gestão Financeira</small></div></div>
+  <div class="nav">
+    <button class="active" data-page="dashboard">📊 Dashboard</button>
+    <button data-page="alunos">👥 Alunos</button>
+    <button data-page="mensalidades">💰 Mensalidades</button>
+    <button data-page="cobrancas">📲 Cobranças</button>
+    <button data-page="relatorios">📑 Relatórios</button>
+    <button data-page="config">⚙️ Configurações</button>
+  </div>
+  <div style="position:absolute;bottom:18px;left:15px;right:15px;font-size:11px;opacity:.7">Versão completa • protótipo web</div>
+</aside>
+
+<main class="content">
+<header class="top">
+  <div><button class="btn soft mobile-menu" onclick="toggleMobile()">☰ Menu</button><h1 id="pageTitle">Dashboard</h1><p id="today"></p></div>
+  <div class="actions"><button class="btn soft" onclick="exportar()">⬇ Backup</button><button class="btn primary" onclick="abrirAluno()">+ Novo aluno</button></div>
+</header>
+
+<section id="page-dashboard" class="page">
+  <div class="cards" id="dashboardCards"></div>
+  <div class="grid2">
+    <div class="panel"><div class="panel-head"><h2>Recebimentos — últimos 6 meses</h2></div><div id="chart" class="chart"></div></div>
+    <div class="panel"><div class="panel-head"><h2>Resumo por categoria</h2></div><div class="table-wrap"><table><thead><tr><th>Categoria</th><th>Alunos</th><th>Recebido</th><th>Atrasado</th></tr></thead><tbody id="catTable"></tbody></table></div></div>
+  </div>
+  <div class="panel"><div class="panel-head"><h2>Próximos vencimentos</h2><button class="btn soft mini" onclick="ir('mensalidades')">Ver todos</button></div><div class="table-wrap"><table><thead><tr><th>Aluno</th><th>Categoria</th><th>Vencimento</th><th>Valor</th><th>Status</th><th>Ação</th></tr></thead><tbody id="proximos"></tbody></table></div></div>
+</section>
+
+<section id="page-alunos" class="page hidden">
+  <div class="panel"><div class="panel-head"><h2>Alunos</h2><div class="searchbar"><input id="buscaAluno" placeholder="Pesquisar aluno, WhatsApp ou categoria" oninput="renderAlunos()"><select id="fAtivo" onchange="renderAlunos()"><option value="">Todos</option><option value="1">Ativos</option><option value="0">Inativos</option></select></div></div>
+  <div class="table-wrap"><table><thead><tr><th>Aluno</th><th>Categoria</th><th>Entrada</th><th>Venc.</th><th>Mensalidade</th><th>WhatsApp</th><th>Situação</th><th>Ações</th></tr></thead><tbody id="alunosTable"></tbody></table></div></div>
+</section>
+
+<section id="page-mensalidades" class="page hidden">
+  <div class="panel"><div class="panel-head"><h2>Controle de mensalidades</h2><div class="actions"><button class="btn primary" onclick="gerarMensalidades(true)">🔄 Gerar 12 meses</button><button class="btn success" onclick="abrirPagamento()">💳 Registrar pagamento</button></div></div>
+  <div class="grid">
+    <div><label>Aluno</label><select id="mfAluno" onchange="renderMensalidades()"><option value="">Todos</option></select></div>
+    <div><label>Categoria</label><select id="mfCat" onchange="renderMensalidades()"><option value="">Todas</option><option>5-6 anos</option><option>8-10 anos</option><option>9 anos</option><option>12-14 anos</option></select></div>
+    <div><label>Status</label><select id="mfStatus" onchange="renderMensalidades()"><option value="">Todos</option><option>PAGO</option><option>PENDENTE</option><option>ATRASADO</option></select></div>
+    <div><label>Mês</label><input id="mfMes" type="month" onchange="renderMensalidades()"></div>
+  </div></div>
+  <div class="panel"><div class="table-wrap"><table><thead><tr><th>Aluno</th><th>Categoria</th><th>Mês</th><th>Vencimento</th><th>Valor</th><th>Pago</th><th>Forma</th><th>Status</th><th>Ações</th></tr></thead><tbody id="mensTable"></tbody></table></div></div>
+</section>
+
+<section id="page-cobrancas" class="page hidden">
+  <div class="panel"><div class="panel-head"><h2>Central de cobranças</h2><button class="btn primary" onclick="renderCobrancas()">Atualizar</button></div>
+  <div class="hint">Aqui aparecem as mensalidades pendentes e atrasadas. O botão WhatsApp abre a conversa com a mensagem pronta. O envio 100% automático requer API oficial/serviço externo.</div>
+  <div class="cards" id="chargeCards"></div>
+  <div class="table-wrap"><table><thead><tr><th>Aluno</th><th>WhatsApp</th><th>Referência</th><th>Vencimento</th><th>Valor</th><th>Status</th><th>Atraso</th><th>Ação</th></tr></thead><tbody id="chargeTable"></tbody></table></div></div>
+</section>
+
+<section id="page-relatorios" class="page hidden">
+  <div class="panel"><div class="panel-head"><h2>Relatórios</h2><div class="actions"><button class="btn success" onclick="exportarCSV('mensalidades')">⬇ CSV mensalidades</button><button class="btn success" onclick="exportarCSV('alunos')">⬇ CSV alunos</button></div></div>
+  <div class="grid">
+    <div><label>Categoria</label><select id="rfCat" onchange="renderRelatorio()"><option value="">Todas</option><option>5-6 anos</option><option>8-10 anos</option><option>9 anos</option><option>12-14 anos</option></select></div>
+    <div><label>Status</label><select id="rfStatus" onchange="renderRelatorio()"><option value="">Todos</option><option>PAGO</option><option>PENDENTE</option><option>ATRASADO</option></select></div>
+  </div></div>
+  <div class="cards" id="reportCards"></div>
+  <div class="panel"><h2>Resultado</h2><div class="table-wrap"><table><thead><tr><th>Aluno</th><th>Categoria</th><th>Mês</th><th>Vencimento</th><th>Valor</th><th>Pago</th><th>Status</th></tr></thead><tbody id="reportTable"></tbody></table></div></div>
+</section>
+
+<section id="page-config" class="page hidden">
+  <div class="panel"><h2>Configurações gerais</h2><div class="grid">
+    <div><label>Nome da escola</label><input id="cfgNome"></div>
+    <div><label>Valor padrão</label><input id="cfgValor" type="number" step="0.01"></div>
+    <div><label>Mês inicial das mensalidades</label><input id="cfgMes" type="month"></div>
+    <div><label>WhatsApp da escola</label><input id="cfgWhats" placeholder="5533999999999"></div>
+  </div><br><button class="btn primary" onclick="salvarConfig()">Salvar</button></div>
+  <div class="panel"><h2>Backup e restauração</h2><div class="actions"><button class="btn success" onclick="exportar()">⬇ Baixar backup JSON</button><label class="btn soft" style="display:inline-block;cursor:pointer">⬆ Restaurar backup <input type="file" accept=".json" style="display:none" onchange="importar(event)"></label><button class="btn danger" onclick="zerar()">Apagar dados</button></div></div>
+  <div class="panel"><h2>Automação do WhatsApp</h2><div class="hint">O sistema já prepara a mensagem e abre o WhatsApp. Para cobrar sozinho, sem clicar, será necessário um backend hospedado + API oficial do WhatsApp (ou um serviço de automação). Essa integração pode ser adicionada sem mudar o controle financeiro.</div></div>
+</section>
+</main>
+</div>
+
+<div class="modal" id="modal"><div class="modal-box"><div class="modal-head"><h2 id="modalTitle">Novo</h2><button class="close" onclick="fecharModal()">×</button></div><div id="modalBody"></div></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+const KEY='vida_esportiva_completo_v1';
+const base={alunos:[],mensalidades:[],config:{nome:'Vida Esportiva',valor:154.90,mes:new Date().toISOString().slice(0,7),whats:''}};
+let db=JSON.parse(localStorage.getItem(KEY)||JSON.stringify(base));
+db.config=Object.assign({},base.config,db.config||{});
+let editing=null;
+
+function save(){localStorage.setItem(KEY,JSON.stringify(db))}
+function money(v){return Number(v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'})}
+function dateBR(s){if(!s)return '-';let p=s.split('-');return p.length===3?`${p[2]}/${p[1]}/${p[0]}`:s}
+function ymBR(s){if(!s)return '-';let [y,m]=s.split('-');return new Date(+y,+m-1,1).toLocaleDateString('pt-BR',{month:'long',year:'numeric'})}
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]) )}
+function toast(t){let x=document.getElementById('toast');x.textContent=t;x.classList.add('show');setTimeout(()=>x.classList.remove('show'),2200)}
+function login(){if(document.getElementById('loginUser').value==='admin'&&document.getElementById('loginPass').value==='1234'){document.getElementById('login').style.display='none';sessionStorage.vl=1}else alert('Usuário ou senha incorretos.')}
+if(sessionStorage.vl) {
+  document.getElementById('login').style.display='none';
+} else {
+  document.getElementById('login').style.display='flex';
+}
+
+document.querySelectorAll('.nav button').forEach(b=>b.onclick=()=>ir(b.dataset.page));
+function ir(page){document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('active',b.dataset.page===page));document.querySelectorAll('.page').forEach(p=>p.classList.add('hidden'));document.getElementById('page-'+page).classList.remove('hidden');document.getElementById('pageTitle').textContent={dashboard:'Dashboard',alunos:'Alunos',mensalidades:'Mensalidades',cobrancas:'Cobranças',relatorios:'Relatórios',config:'Configurações'}[page];renderAll()}
+function toggleMobile(){document.querySelector('.sidebar').style.display=document.querySelector('.sidebar').style.display==='block'?'none':'block'}
+
+function getStatus(m){if(Number(m.pago||0)>=Number(m.valor||0))return 'PAGO';let d=new Date(m.vencimento+'T23:59:59');return new Date()>d?'ATRASADO':'PENDENTE'}
+function atraso(m){return getStatus(m)==='ATRASADO'?Math.max(0,Math.floor((Date.now()-new Date(m.vencimento+'T23:59:59').getTime())/86400000)):0}
+function badge(st){let c=st==='PAGO'?'paid':st==='ATRASADO'?'late':'pending';return `<span class="badge ${c}">${st}</span>`}
+
+function abrirAluno(id=null){
+editing=id;let a=id?db.alunos.find(x=>x.id===id):{nome:'',entrada:new Date().toISOString().slice(0,10),categoria:'5-6 anos',whatsapp:'',dia:10,valor:db.config.valor,ativo:true};
+document.getElementById('modalTitle').textContent=id?'Editar aluno':'Novo aluno';
+document.getElementById('modalBody').innerHTML=`<div class="grid">
+<div><label>Nome completo</label><input id="mNome" value="${esc(a.nome)}"></div>
+<div><label>Data de entrada</label><input id="mEntrada" type="date" value="${a.entrada||''}"></div>
+<div><label>Categoria</label><select id="mCat">${['5-6 anos','8-10 anos','9 anos','12-14 anos'].map(c=>`<option ${a.categoria===c?'selected':''}>${c}</option>`).join('')}</select></div>
+<div><label>WhatsApp do responsável</label><input id="mWhats" value="${esc(a.whatsapp||'')}" placeholder="5533999999999"></div>
+<div><label>Dia do vencimento</label><input id="mDia" type="number" min="1" max="31" value="${a.dia||10}"></div>
+<div><label>Valor da mensalidade</label><input id="mValor" type="number" step="0.01" value="${a.valor??db.config.valor}"></div>
+<div><label>Situação</label><select id="mAtivo"><option value="1" ${a.ativo!==false?'selected':''}>Ativo</option><option value="0" ${a.ativo===false?'selected':''}>Inativo</option></select></div>
+</div><br><button class="btn primary" onclick="salvarAluno()">Salvar aluno</button>`;
+document.getElementById('modal').classList.add('open')
+}
+function fecharModal(){document.getElementById('modal').classList.remove('open')}
+function salvarAluno(){
+let nome=document.getElementById('mNome').value.trim();if(!nome)return alert('Informe o nome.');
+let a={id:editing||Date.now(),nome,entrada:document.getElementById('mEntrada').value,categoria:document.getElementById('mCat').value,whatsapp:document.getElementById('mWhats').value.replace(/\D/g,''),dia:+document.getElementById('mDia').value||10,valor:+document.getElementById('mValor').value||db.config.valor,ativo:document.getElementById('mAtivo').value==='1'};
+let i=db.alunos.findIndex(x=>x.id===a.id);if(i>=0)db.alunos[i]=a;else db.alunos.push(a);
+gerarMensalidades(false);save();fecharModal();toast('Aluno salvo.')
+}
+function excluirAluno(id){if(confirm('Excluir o aluno e as mensalidades dele?')){db.alunos=db.alunos.filter(a=>a.id!==id);db.mensalidades=db.mensalidades.filter(m=>m.alunoId!==id);save();renderAll();toast('Aluno excluído.')}}
+function gerarMensalidades(show){
+  const hoje=new Date();
+  const ymHoje=`${hoje.getFullYear()}-${String(hoje.getMonth()+1).padStart(2,'0')}`;
+
+  db.alunos.filter(a=>a.ativo).forEach(a=>{
+    let abertas=db.mensalidades
+      .filter(m=>m.alunoId===a.id && getStatus(m)!=='PAGO')
+      .sort((x,y)=>x.vencimento.localeCompare(y.vencimento));
+
+    if(abertas.length>1){
+      abertas.slice(1).forEach(m=>{
+        const idx=db.mensalidades.findIndex(x=>x.id===m.id);
+        if(idx>=0) db.mensalidades.splice(idx,1);
+      });
+      abertas=abertas.slice(0,1);
+    }
+
+    if(abertas.length===0){
+      const pagos=db.mensalidades
+        .filter(m=>m.alunoId===a.id && getStatus(m)==='PAGO')
+        .sort((x,y)=>x.mes.localeCompare(y.mes));
+
+      let base;
+      if(pagos.length){
+        const [yy,mm]=pagos[pagos.length-1].mes.split('-').map(Number);
+        base=new Date(yy,mm,1);
+      }else{
+        const entrada=a.entrada||ymHoje;
+        const [ey,em]=entrada.slice(0,7).split('-').map(Number);
+        base=new Date(ey,em-1,1);
+        if(base < new Date(hoje.getFullYear(),hoje.getMonth(),1)){
+          base=new Date(hoje.getFullYear(),hoje.getMonth(),1);
+        }
+      }
+
+      const ym=`${base.getFullYear()}-${String(base.getMonth()+1).padStart(2,'0')}`;
+      const last=new Date(base.getFullYear(),base.getMonth()+1,0).getDate();
+      const day=Math.min(Number(a.dia)||10,last);
+      const venc=`${ym}-${String(day).padStart(2,'0')}`;
+      const id=`${a.id}_${ym}`;
+
+      if(!db.mensalidades.some(x=>x.id===id)){
+        db.mensalidades.push({
+          id,alunoId:a.id,nome:a.nome,categoria:a.categoria,
+          whatsapp:a.whatsapp,mes:ym,vencimento:venc,
+          valor:Number(a.valor)||Number(db.config.valor)||154.90,
+          pago:0,dataPagamento:'',forma:''
+        });
+      }
+    }else{
+      const m=abertas[0];
+      const [yy,mm]=m.mes.split('-').map(Number);
+      const last=new Date(yy,mm,0).getDate();
+      const day=Math.min(Number(a.dia)||10,last);
+      Object.assign(m,{
+        nome:a.nome,categoria:a.categoria,whatsapp:a.whatsapp,
+        valor:Number(a.valor)||Number(db.config.valor)||154.90,
+        vencimento:`${m.mes}-${String(day).padStart(2,'0')}`
+      });
+    }
+  });
+
+  save();
+  if(show){
+    renderAll();
+    toast('Mensalidades atualizadas.');
+  }
+}
+
+function renderDash(){
+  let active=db.alunos.filter(a=>a.ativo).length;
+  let rec=db.mensalidades.reduce((s,m)=>s+Number(m.pago||0),0);
+  let open=db.mensalidades.filter(m=>getStatus(m)!=='PAGO').reduce((s,m)=>s+Number(m.valor||0),0);
+  let late=db.mensalidades.filter(m=>getStatus(m)==='ATRASADO').reduce((s,m)=>s+Number(m.valor||0),0);
+  let cards=[
+    ['Alunos ativos',active,'kpi-blue'],
+    ['Recebido',money(rec),'kpi-green'],
+    ['A receber',money(open),'kpi-yellow'],
+    ['Em atraso',money(late),'kpi-red'],
+    ['Inadimplentes',new Set(db.mensalidades.filter(m=>getStatus(m)==='ATRASADO').map(m=>m.alunoId)).size,'kpi-red']
+  ];
+  document.getElementById('dashboardCards').innerHTML=cards.map(c=>`<div class="card ${c[2]}"><div class="label">${c[0]}</div><div class="value">${c[1]}</div></div>`).join('');
+
+  let cats=['5-6 anos','8-10 anos','9 anos','12-14 anos'];
+  document.getElementById('catTable').innerHTML=cats.map(c=>{
+    let al=db.alunos.filter(a=>a.ativo&&a.categoria===c).length;
+    let r=db.mensalidades.filter(m=>m.categoria===c).reduce((s,m)=>s+Number(m.pago||0),0);
+    let l=db.mensalidades.filter(m=>m.categoria===c&&getStatus(m)==='ATRASADO').reduce((s,m)=>s+Number(m.valor||0),0);
+    return `<tr><td><b>${c}</b></td><td>${al}</td><td>${money(r)}</td><td>${money(l)}</td></tr>`;
+  }).join('');
+
+  let now=new Date(),vals=[];
+  for(let i=5;i>=0;i--){
+    let d=new Date(now.getFullYear(),now.getMonth()-i,1);
+    let ym=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+    let v=db.mensalidades.filter(m=>m.mes===ym).reduce((s,m)=>s+Number(m.pago||0),0);
+    vals.push({ym,v,label:d.toLocaleDateString('pt-BR',{month:'short'}).replace('.','')});
+  }
+  let max=Math.max(1,...vals.map(x=>x.v));
+  document.getElementById('chart').innerHTML=vals.map(x=>`<div class="bar-wrap"><div class="bar-value">${money(x.v)}</div><div class="bar" style="height:${Math.max(2,x.v/max*170)}px"></div><div class="bar-label">${x.label}</div></div>`).join('');
+
+  let seenFuture=new Set();
+  let future=db.mensalidades.filter(m=>{
+    if(getStatus(m)==='PAGO'||seenFuture.has(m.alunoId))return false;
+    seenFuture.add(m.alunoId);
+    return true;
+  }).sort((a,b)=>a.vencimento.localeCompare(b.vencimento)).slice(0,8);
+
+  document.getElementById('proximos').innerHTML=future.map(m=>`<tr><td>${esc(m.nome)}</td><td>${m.categoria}</td><td>${dateBR(m.vencimento)}</td><td>${money(m.valor)}</td><td>${badge(getStatus(m))}</td><td><button class="btn primary mini" onclick="cobrar('${m.id}')">WhatsApp</button></td></tr>`).join('')||`<tr><td colspan="6" class="empty">Nenhuma cobrança pendente.</td></tr>`;
+}
+
+function fillAlunoFilter(){
+  let s=document.getElementById('mfAluno'),cur=s.value;
+  s.innerHTML='<option value="">Todos</option>'+db.alunos.map(a=>`<option value="${a.id}">${esc(a.nome)}</option>`).join('');
+  s.value=cur;
+}
+
+function renderMensalidades(){
+  fillAlunoFilter();
+  let a=document.getElementById('mfAluno').value;
+  let c=document.getElementById('mfCat').value;
+  let s=document.getElementById('mfStatus').value;
+  let mes=document.getElementById('mfMes').value;
+  let arr=db.mensalidades.filter(m=>
+    (!a||String(m.alunoId)===a)&&
+    (!c||m.categoria===c)&&
+    (!s||getStatus(m)===s)&&
+    (!mes||m.mes===mes)
+  ).sort((x,y)=>x.vencimento.localeCompare(y.vencimento));
+
+  document.getElementById('mensTable').innerHTML=arr.map(m=>`<tr>
+    <td>${esc(m.nome)}</td><td>${m.categoria}</td><td>${ymBR(m.mes)}</td>
+    <td>${dateBR(m.vencimento)}</td><td>${money(m.valor)}</td>
+    <td>${m.dataPagamento?dateBR(m.dataPagamento):'-'}</td><td>${m.forma||'-'}</td>
+    <td>${badge(getStatus(m))}</td>
+    <td><div class="row-actions">
+      <button class="btn success mini" onclick="abrirPagamento('${m.id}')">Pagamento</button>
+      <button class="btn primary mini" onclick="cobrar('${m.id}')">WhatsApp</button>
+    </div></td>
+  </tr>`).join('')||`<tr><td colspan="9" class="empty">Nenhuma mensalidade encontrada.</td></tr>`;
+}
+
+function abrirPagamento(id=null){
+  if(!id){
+    id=db.mensalidades.find(m=>getStatus(m)!=='PAGO')?.id;
+    if(!id)return alert('Não há mensalidades pendentes.');
+  }
+  let m=db.mensalidades.find(x=>x.id===id);
+  if(!m)return alert('Mensalidade não encontrada.');
+  document.getElementById('modalTitle').textContent='Registrar pagamento';
+  document.getElementById('modalBody').innerHTML=`<div class="hint"><b>${esc(m.nome)}</b> • ${ymBR(m.mes)} • ${money(m.valor)} • venc. ${dateBR(m.vencimento)}</div>
+  <div class="grid">
+    <div><label>Valor pago</label><input id="pValor" type="number" step="0.01" value="${m.valor}"></div>
+    <div><label>Data do pagamento</label><input id="pData" type="date" value="${new Date().toISOString().slice(0,10)}"></div>
+    <div><label>Forma</label><select id="pForma"><option ${m.forma==='PIX'?'selected':''}>PIX</option><option ${m.forma==='Dinheiro'?'selected':''}>Dinheiro</option></select></div>
+  </div><br><button class="btn success" onclick="salvarPagamento('${m.id}')">Confirmar pagamento</button>`;
+  document.getElementById('modal').classList.add('open');
+}
+
+function salvarPagamento(id){
+  let m=db.mensalidades.find(x=>x.id===id);
+  if(!m)return;
+  const valorPago=+document.getElementById('pValor').value||0;
+  if(valorPago<=0)return alert('Informe um valor pago.');
+  m.pago=valorPago;
+  m.dataPagamento=document.getElementById('pData').value;
+  m.forma=document.getElementById('pForma').value;
+  save();
+  gerarMensalidades(false);
+  fecharModal();
+  toast('Pagamento registrado. A próxima mensalidade foi gerada automaticamente.');
+  renderAll();
+}
+
+function renderAlunos(){
+  let q=(document.getElementById('buscaAluno').value||'').toLowerCase();
+  let f=document.getElementById('fAtivo').value;
+  let arr=db.alunos.filter(a=>
+    (!q||`${a.nome} ${a.whatsapp||''} ${a.categoria||''}`.toLowerCase().includes(q))&&
+    (f===''||(f==='1'&&a.ativo)||(f==='0'&&!a.ativo))
+  );
+  document.getElementById('alunosTable').innerHTML=arr.map(a=>`<tr>
+    <td>${esc(a.nome)}</td><td>${a.categoria}</td><td>${dateBR(a.entrada)}</td>
+    <td>Dia ${a.dia}</td><td>${money(a.valor)}</td><td>${esc(a.whatsapp||'-')}</td>
+    <td>${a.ativo?'<span class="badge active-b">ATIVO</span>':'<span class="badge inactive-b">INATIVO</span>'}</td>
+    <td><div class="row-actions">
+      <button class="btn soft mini" onclick="abrirAluno(${a.id})">Editar</button>
+      <button class="btn danger mini" onclick="excluirAluno(${a.id})">Excluir</button>
+    </div></td>
+  </tr>`).join('')||`<tr><td colspan="8" class="empty">Nenhum aluno encontrado.</td></tr>`;
+}
+
+function renderCobrancas(){
+  let arr=db.mensalidades.filter(m=>getStatus(m)!=='PAGO').sort((a,b)=>a.vencimento.localeCompare(b.vencimento));
+  let pend=arr.filter(m=>getStatus(m)==='PENDENTE');
+  let atras=arr.filter(m=>getStatus(m)==='ATRASADO');
+  let total=arr.reduce((s,m)=>s+Number(m.valor||0),0);
+
+  document.getElementById('chargeCards').innerHTML=[
+    ['Pendentes',pend.length,'kpi-yellow'],
+    ['Atrasadas',atras.length,'kpi-red'],
+    ['Total a cobrar',money(total),'kpi-blue'],
+    ['Alunos',new Set(arr.map(m=>m.alunoId)).size,'kpi-green']
+  ].map(c=>`<div class="card ${c[2]}"><div class="label">${c[0]}</div><div class="value">${c[1]}</div></div>`).join('');
+
+  document.getElementById('chargeTable').innerHTML=arr.map(m=>`<tr>
+    <td>${esc(m.nome)}</td><td>${esc(m.whatsapp||'-')}</td><td>${ymBR(m.mes)}</td>
+    <td>${dateBR(m.vencimento)}</td><td>${money(m.valor)}</td>
+    <td>${badge(getStatus(m))}</td><td>${atraso(m)} dia(s)</td>
+    <td><button class="btn primary mini" onclick="cobrar('${m.id}')">WhatsApp</button></td>
+  </tr>`).join('')||`<tr><td colspan="8" class="empty">Nenhuma cobrança pendente.</td></tr>`;
+}
+
+function cobrar(id){
+  let m=db.mensalidades.find(x=>x.id===id);
+  if(!m)return;
+  let numero=String(m.whatsapp||'').replace(/\D/g,'');
+  if(!numero)return alert('Este aluno não possui WhatsApp cadastrado.');
+  let msg=`Olá! Aqui é da Escola de Esportes Vida Esportiva. Estamos entrando em contato sobre a mensalidade de ${ymBR(m.mes)}, no valor de ${money(m.valor)}, com vencimento em ${dateBR(m.vencimento)}. Status: ${getStatus(m)}.`;
+  window.open(`https://wa.me/${numero}?text=${encodeURIComponent(msg)}`,'_blank');
+}
+
+function renderRelatorio(){
+  let c=document.getElementById('rfCat').value;
+  let s=document.getElementById('rfStatus').value;
+  let arr=db.mensalidades.filter(m=>(!c||m.categoria===c)&&(!s||getStatus(m)===s)).sort((a,b)=>a.vencimento.localeCompare(b.vencimento));
+  let recebido=arr.reduce((x,m)=>x+Number(m.pago||0),0);
+  let aberto=arr.filter(m=>getStatus(m)!=='PAGO').reduce((x,m)=>x+Number(m.valor||0),0);
+  let atras=arr.filter(m=>getStatus(m)==='ATRASADO').reduce((x,m)=>x+Number(m.valor||0),0);
+
+  document.getElementById('reportCards').innerHTML=[
+    ['Registros',arr.length,'kpi-blue'],
+    ['Recebido',money(recebido),'kpi-green'],
+    ['A receber',money(aberto),'kpi-yellow'],
+    ['Em atraso',money(atras),'kpi-red']
+  ].map(c=>`<div class="card ${c[2]}"><div class="label">${c[0]}</div><div class="value">${c[1]}</div></div>`).join('');
+
+  document.getElementById('reportTable').innerHTML=arr.map(m=>`<tr>
+    <td>${esc(m.nome)}</td><td>${m.categoria}</td><td>${ymBR(m.mes)}</td>
+    <td>${dateBR(m.vencimento)}</td><td>${money(m.valor)}</td>
+    <td>${m.dataPagamento?dateBR(m.dataPagamento):'-'}</td><td>${badge(getStatus(m))}</td>
+  </tr>`).join('')||`<tr><td colspan="7" class="empty">Nenhum registro encontrado.</td></tr>`;
+}
+
+function renderConfig(){
+  document.getElementById('cfgNome').value=db.config.nome||'Vida Esportiva';
+  document.getElementById('cfgValor').value=db.config.valor??154.90;
+  document.getElementById('cfgMes').value=db.config.mes||new Date().toISOString().slice(0,7);
+  document.getElementById('cfgWhats').value=db.config.whats||'';
+}
+
+function salvarConfig(){
+  db.config.nome=document.getElementById('cfgNome').value.trim()||'Vida Esportiva';
+  db.config.valor=Number(document.getElementById('cfgValor').value)||154.90;
+  db.config.mes=document.getElementById('cfgMes').value||new Date().toISOString().slice(0,7);
+  db.config.whats=document.getElementById('cfgWhats').value.replace(/\D/g,'');
+  save();gerarMensalidades(false);renderAll();toast('Configurações salvas.');
+}
+
+function renderAll(){
+  document.getElementById('today').textContent=new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long',year:'numeric'});
+  gerarMensalidades(false);
+  renderDash();
+  renderAlunos();
+  renderMensalidades();
+  renderCobrancas();
+  renderRelatorio();
+  renderConfig();
+}
+
+function exportar(){
+  const blob=new Blob([JSON.stringify(db,null,2)],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='vida-esportiva-backup.json';
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+function importar(e){
+  const f=e.target.files&&e.target.files[0];
+  if(!f)return;
+  const r=new FileReader();
+  r.onload=()=>{
+    try{
+      const data=JSON.parse(r.result);
+      if(!data.alunos||!data.mensalidades||!data.config)throw new Error('Backup inválido');
+      db=data;db.config=Object.assign({},base.config,db.config||{});
+      save();renderAll();toast('Backup restaurado.');
+    }catch(err){alert('Não foi possível restaurar o backup.');}
+  };
+  r.readAsText(f);
+}
+
+function csvEscape(x){
+  return `"${String(x??'').replace(/"/g,'""')}"`;
+}
+
+function exportarCSV(tipo){
+  let rows=[];
+  if(tipo==='alunos'){
+    rows=[['Nome','Categoria','Entrada','Vencimento','Valor','WhatsApp','Ativo']];
+    db.alunos.forEach(a=>rows.push([a.nome,a.categoria,a.entrada,a.dia,a.valor,a.whatsapp,a.ativo?'SIM':'NÃO']));
+  }else{
+    rows=[['Aluno','Categoria','Mês','Vencimento','Valor','Pago','Data pagamento','Forma','Status']];
+    db.mensalidades.forEach(m=>rows.push([m.nome,m.categoria,m.mes,m.vencimento,m.valor,m.pago,m.dataPagamento,m.forma,getStatus(m)]));
+  }
+  const blob=new Blob([rows.map(r=>r.map(csvEscape).join(';')).join('\n')],{type:'text/csv;charset=utf-8;'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download=`vida-esportiva-${tipo}.csv`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+function zerar(){
+  if(!confirm('Isso apagará alunos, mensalidades e configurações salvas neste navegador. Continuar?'))return;
+  localStorage.removeItem(KEY);
+  location.reload();
+}
+
+/* Navegação do menu */
+document.querySelectorAll('.nav button').forEach(btn=>{
+  btn.addEventListener('click',()=>ir(btn.dataset.page));
+});
+
+function ir(page){
+  try{
+    document.querySelectorAll('.nav button').forEach(b=>{
+      b.classList.toggle('active',b.dataset.page===page);
+    });
+    document.querySelectorAll('.page').forEach(p=>p.classList.add('hidden'));
+    const alvo=document.getElementById('page-'+page);
+    if(!alvo)throw new Error('Página não encontrada: '+page);
+    alvo.classList.remove('hidden');
+    const titulos={
+      dashboard:'Dashboard',
+      alunos:'Alunos',
+      mensalidades:'Mensalidades',
+      cobrancas:'Cobranças',
+      relatorios:'Relatórios',
+      config:'Configurações'
+    };
+    document.getElementById('pageTitle').textContent=titulos[page]||'Vida Esportiva';
+    renderAll();
+    if(window.innerWidth<=700)document.querySelector('.sidebar').style.display='none';
+  }catch(e){
+    console.error('Erro ao abrir menu:',e);
+    alert('Não foi possível abrir esta seção. Verifique o console do navegador.');
+  }
+}
+
+function toggleMobile(){
+  const side=document.querySelector('.sidebar');
+  side.style.display=side.style.display==='block'?'none':'block';
+}
+
+document.getElementById('startupFallback').style.display='none';
+
+</script>
+</body>
+</html>
