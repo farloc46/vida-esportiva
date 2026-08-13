@@ -235,6 +235,46 @@ try {
     '<div><div style="font-size:48px">⚽</div><h2>Vida Esportiva</h2><p>O sistema encontrou um erro ao carregar.</p><p style="font-size:13px">Atualize a página e tente novamente.</p></div>';
 }
 document.getElementById('startupFallback').style.display='none';
+      // ===== NAVEGAÇÃO DO MENU =====
+function ir(page) {
+  try {
+    document.querySelectorAll('.nav button').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.page === page);
+    });
+
+    if (page === 'alunos') {
+      renderAlunos();
+    } 
+    else if (page === 'mensalidades') {
+      renderMensalidades();
+    } 
+    else if (page === 'cobrancas') {
+      renderCobrancas();
+    } 
+    else if (page === 'relatorios') {
+      renderRelatorio();
+    } 
+    else if (page === 'config') {
+      renderConfig();
+    } 
+    else if (page === 'dashboard') {
+      renderAll();
+    }
+
+    // Fecha o menu lateral no celular
+    document.body.classList.remove('menu-open');
+
+  } catch (e) {
+    console.error('Erro ao abrir menu:', e);
+  }
+}
+
+// Liga os botões do menu à função ir()
+document.querySelectorAll('.nav button[data-page]').forEach(btn => {
+  btn.addEventListener('click', function() {
+    ir(this.dataset.page);
+  });
+});
 </script>
 </body>
 </html>
