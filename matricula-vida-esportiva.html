@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vida Esportiva - Matrícula Online</title>
+<style>
+:root{--verde:#087443;--verde2:#05613a;--fundo:#f3f5f7;--texto:#17202a}
+*{box-sizing:border-box}
+body{margin:0;background:var(--fundo);font-family:Arial,sans-serif;color:var(--texto)}
+header{background:var(--verde);color:#fff;text-align:center;padding:22px 15px}
+header h1{margin:0;font-size:25px}
+header p{margin:7px 0 0;font-size:14px}
+main{max-width:760px;margin:18px auto;padding:0 12px}
+.card{background:#fff;border-radius:14px;padding:18px;margin-bottom:14px;box-shadow:0 3px 14px #00000012}
+h2{font-size:18px;margin:0 0 14px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+label{font-size:13px;font-weight:bold;display:block}
+input,select,textarea{width:100%;margin-top:6px;padding:12px;border:1px solid #d7dce0;border-radius:9px;font-size:15px;background:#fff}
+.full{grid-column:1/-1}
+.pix{background:#f4f7f8;border-radius:10px;padding:13px;line-height:1.7}
+button{border:0;border-radius:9px;padding:12px 16px;background:var(--verde);color:#fff;font-weight:bold;font-size:15px;cursor:pointer}
+button.secondary{background:#fff;color:var(--verde);border:1px solid var(--verde);margin-left:6px}
+.check{display:flex;gap:10px;align-items:flex-start;margin:12px 0;font-size:13px}
+.check input{width:auto;margin-top:2px}
+small{color:#65717a}
+@media(max-width:600px){.grid{grid-template-columns:1fr}.full{grid-column:auto}}
+</style>
+</head>
+<body>
+<header>
+  <h1>Vida Esportiva</h1>
+  <p>Ficha de Matrícula Online</p>
+</header>
+
+<main>
+  <p><small>* Todos os campos e autorizações obrigatórios precisam ser preenchidos.</small></p>
+
+  <form id="matriculaForm">
+    <section class="card">
+      <h2>📝 Dados do aluno</h2>
+      <div class="grid">
+        <label class="full">Nome completo do aluno *
+          <input id="aluno" required>
+        </label>
+        <label>Data de nascimento *
+          <input id="nascimento" type="date" required>
+        </label>
+        <label>Escola onde estuda *
+          <input id="escola" required>
+        </label>
+        <label>Turno escolar *
+          <select id="turno" required>
+            <option value="">Selecione</option><option>Manhã</option><option>Tarde</option><option>Noite</option><option>Integral</option>
+          </select>
+        </label>
+        <label>Profissão do pai/responsável *
+          <input id="profissao" required>
+        </label>
+      </div>
+      <p id="categoria" style="margin-bottom:0;color:#087443;font-weight:bold">A categoria será identificada pela idade.</p>
+    </section>
+
+    <section class="card">
+      <h2>👨‍👩‍👦 Dados do responsável</h2>
+      <div class="grid">
+        <label>Nome do responsável *
+          <input id="responsavel" required>
+        </label>
+        <label>WhatsApp *
+          <input id="whatsapp" inputmode="tel" placeholder="(33) 99999-9999" required>
+        </label>
+        <label>CPF *
+          <input id="cpf" required>
+        </label>
+        <label>Endereço *
+          <input id="endereco" required>
+        </label>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>💰 Matrícula e Pix</h2>
+      <div class="pix">
+        <b>Matrícula:</b> R$ 150,00<br>
+        <b>Chave Pix:</b> 56.980.861 0001-38<br>
+        <b>Recebedor:</b> Vida Esportiva<br>
+        <b>Banco:</b> Sicoob
+      </div>
+      <br>
+      <button type="button" class="secondary" onclick="copiarPix()">📋 Copiar Pix</button>
+    </section>
+
+    <section class="card">
+      <h2>✅ Confirmações</h2>
+      <label class="check"><input id="dadosOk" type="checkbox" required>
+        <span>Confirmo que as informações estão corretas e autorizo seu uso para fins de matrícula e comunicação da escola. *</span>
+      </label>
+
+      <label>Foto do aluno *
+        <input id="foto" type="file" accept="image/*" required>
+      </label>
+
+      <label class="check"><input id="atividade" type="checkbox" required>
+        <span>Eu, responsável pelo aluno, autorizo meu filho(a) a participar das atividades físicas, esportivas, recreativas e treinamentos promovidos pela Escola de Esportes Vida Esportiva, declarando estar ciente da necessidade de informar qualquer condição que possa interferir na prática das atividades. *</span>
+      </label>
+
+      <label class="check"><input id="imagem" type="checkbox" required>
+        <span>Autorizo o uso da imagem do aluno para registros e divulgação das atividades da Vida Esportiva, conforme informações da escola. *</span>
+      </label>
+
+      <button type="submit">Enviar ficha de matrícula</button>
+    </section>
+  </form>
+</main>
+
+<script>
+const PIX="56.980.861 0001-38";
+const WHATSAPP_ESCOLA=""; // coloque aqui o WhatsApp da Vida Esportiva, somente números, com DDI e DDD.
+
+function idade(data){
+  const n=new Date(data+"T00:00:00"), h=new Date();
+  let i=h.getFullYear()-n.getFullYear();
+  const m=h.getMonth()-n.getMonth();
+  if(m<0 || (m===0 && h.getDate()<n.getDate())) i--;
+  return i;
+}
+function categoria(i){
+  if(i>=5 && i<=7)return "5–7 anos";
+  if(i>=8 && i<=10)return "8–10 anos";
+  if(i>=11 && i<=14)return "11–14 anos";
+  return "Fora das categorias atuais";
+}
+document.getElementById("nascimento").addEventListener("change",()=>{
+  const i=idade(nascimento.value);
+  categoria.textContent="Categoria: "+categoria(i)+" (idade: "+i+" anos)";
+});
+function copiarPix(){
+  navigator.clipboard.writeText(PIX).then(()=>alert("Chave Pix copiada."));
+}
+document.getElementById("matriculaForm").addEventListener("submit",e=>{
+  e.preventDefault();
+  const i=idade(nascimento.value), cat=categoria(i);
+  const foto=document.getElementById("foto").files[0]?.name || "";
+  const msg=`*NOVA FICHA DE MATRÍCULA – VIDA ESPORTIVA*%0A%0A`+
+    `*Aluno:* ${aluno.value}%0A*Nascimento:* ${nascimento.value}%0A*Categoria:* ${cat}%0A`+
+    `*Escola:* ${escola.value}%0A*Turno:* ${turno.value}%0A*Profissão do responsável:* ${profissao.value}%0A%0A`+
+    `*Responsável:* ${responsavel.value}%0A*WhatsApp:* ${whatsapp.value}%0A*CPF:* ${cpf.value}%0A*Endereço:* ${endereco.value}%0A`+
+    `%0A*Foto selecionada:* ${foto}%0A%0A*Pagamento da matrícula:* R$ 150,00%0A*Pix:* ${PIX}%0A%0A`+
+    `As autorizações obrigatórias foram confirmadas na ficha.`;
+  if(WHATSAPP_ESCOLA){
+    window.location.href="https://wa.me/"+WHATSAPP_ESCOLA+"?text="+msg;
+  }else{
+    alert("Ficha preenchida com sucesso. Para enviar automaticamente pelo WhatsApp da escola, configure o número da Vida Esportiva no código deste arquivo.");
+  }
+});
+</script>
+</body>
+</html>
