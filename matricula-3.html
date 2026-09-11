@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Vida Esportiva — Matrícula Online</title>
+<style>
+:root{--verde:#087443;--verde2:#05613a;--fundo:#f3f5f7;--texto:#17202a;--muted:#68737d;--linha:#e3e8ec}
+*{box-sizing:border-box}body{margin:0;background:var(--fundo);color:var(--texto);font-family:Arial,Helvetica,sans-serif}
+.top{background:linear-gradient(135deg,var(--verde2),#0a8a52);color:#fff;text-align:center;padding:25px 15px;border-radius:0 0 22px 22px}
+.top h1{margin:5px 0;font-size:26px}.sub{opacity:.9}
+.wrap{max-width:780px;margin:auto;padding:15px}.panel{background:#fff;border-radius:18px;padding:20px;margin:15px 0;box-shadow:0 5px 20px #0001}
+h2{font-size:20px;margin-top:0}.grid{display:grid;grid-template-columns:1fr 1fr;gap:13px}.full{grid-column:1/-1}
+label{display:block;font-size:13px;font-weight:700;margin-bottom:6px}
+input,select{width:100%;padding:12px;border:1px solid var(--linha);border-radius:10px;background:#fff}
+.cat{padding:12px;border-radius:10px;background:#e9f6ef;border:1px solid #bfe3ce;color:var(--verde2);font-weight:700}
+.pix{background:#f7f9fa;border:1px solid var(--linha);border-radius:12px;padding:15px;line-height:1.55;white-space:pre-wrap}
+.consent{display:flex;gap:10px;align-items:flex-start;margin:12px 0;font-size:13px;line-height:1.45}
+.consent input{width:18px;margin-top:2px;flex:none}
+.btn{width:100%;border:0;border-radius:11px;padding:15px 16px;font-weight:800;cursor:pointer;font-size:16px}
+.primary{background:var(--verde);color:#fff}.secondary{background:#eef2f4;color:#17202a;margin-top:10px}
+.msg{display:none;margin-top:15px;padding:14px;border-radius:10px;line-height:1.45}
+.ok{display:block;background:#e9f8ef;color:#075b36;border:1px solid #bfe3ce}
+.erro{display:block;background:#fff0ef;color:#b42318;border:1px solid #f0b8b4}
+.warn{display:block;background:#fff8df;color:#795600;border:1px solid #ead48a}
+.small{font-size:12px;color:var(--muted);line-height:1.5}
+#debug{display:none;white-space:pre-wrap;font-size:11px;background:#111;color:#eee;padding:12px;border-radius:10px;margin-top:10px;overflow:auto}
+@media(max-width:650px){.grid{grid-template-columns:1fr}.full{grid-column:auto}}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+<header class="top">
+  <h1>⚽ Vida Esportiva</h1>
+  <div class="sub">Ficha de Matrícula Online</div>
+</header>
+
+<main class="wrap">
+<form id="form">
+
+<section class="panel">
+<h2>📝 Dados do aluno</h2>
+<div class="grid">
+<div class="full"><label>Nome completo do aluno *</label><input id="aluno" required></div>
+<div><label>Data de nascimento *</label><input id="nascimento" type="date" required></div>
+<div><label>Escola onde o aluno estuda *</label><input id="escola" required></div>
+<div><label>Turno escolar *</label>
+<select id="turno" required>
+<option value="">Selecione</option><option>Manhã</option><option>Tarde</option><option>Integral</option><option>Noite</option>
+</select></div>
+<div><label>Profissão do pai/responsável *</label><input id="profissaoPai" required></div>
+<div><label>Categoria</label><div id="categoria" class="cat">Informe a data de nascimento</div></div>
+</div>
+</section>
+
+<section class="panel">
+<h2>👨‍👩‍👦 Dados do responsável</h2>
+<div class="grid">
+<div><label>Nome do responsável *</label><input id="responsavel" required></div>
+<div><label>WhatsApp do responsável *</label><input id="telefone" type="tel" required placeholder="(33) 99999-9999"></div>
+<div><label>CPF do responsável</label><input id="cpf"></div>
+<div><label>Endereço</label><input id="endereco"></div>
+</div>
+</section>
+
+<section class="panel">
+<h2>💰 Matrícula e Pix</h2>
+<div id="pixBox" class="pix"></div>
+<button type="button" class="btn secondary" id="copyBtn">📋 Copiar Pix</button>
+</section>
+
+<section class="panel">
+<h2>✅ Autorizações</h2>
+<label class="consent"><input type="checkbox" id="aceite" required><span>Confirmo que as informações estão corretas e autorizo o uso dos dados para fins de matrícula e comunicação da escola.</span></label>
+<label class="consent"><input type="checkbox" id="autorizacaoFisica" required><span>Eu, responsável pelo aluno, autorizo meu filho(a) a participar das atividades físicas, esportivas, recreativas e treinamentos promovidos pela Escola de Esportes Vida Esportiva.</span></label>
+<label class="consent"><input type="checkbox" id="autorizacaoImagem"><span>Autorizo o uso da imagem do aluno exclusivamente para registros e divulgação das atividades da Vida Esportiva.</span></label>
+
+<button class="btn primary" type="submit" id="enviarBtn">ENVIAR FICHA DE MATRÍCULA</button>
+<div id="msg" class="msg"></div>
+<pre id="debug"></pre>
+</section>
+
+<p class="small">Após o envio, aguarde a confirmação na própria tela.</p>
+</form>
+</main>
+
+<script>
+const CONFIG={
+  supabaseUrl:'https://rlpawoxizugzrsrioc.supabase.co',
+  supabaseKey:'sb_publishable_fsdNaZ7hzFgxpqB5gGGKRA_mP7daLYJ',
+  matriculaValor:150,
+  pixKey:'56.980.861-0001-38',
+  pixReceiver:'Vida Esportiva',
+  pixBank:'Sicoob'
+};
+
+const $=id=>document.getElementById(id);
+
+function idade(data){
+  if(!data)return null;
+  const n=new Date(data+'T00:00:00'), h=new Date();
+  let a=h.getFullYear()-n.getFullYear();
+  const m=h.getMonth()-n.getMonth();
+  if(m<0 || (m===0 && h.getDate()<n.getDate())) a--;
+  return a;
+}
+
+function categoria(a){
+  if(a===null)return '';
+  if(a>=5&&a<=7)return '5–7 anos';
+  if(a>=8&&a<=10)return '8–10 anos';
+  if(a===11)return '9–11 anos';
+  if(a>=12&&a<=14)return '12–14 anos';
+  return '';
+}
+
+function atualizarCategoria(){
+  const c=categoria(idade($('nascimento').value));
+  $('categoria').textContent=c||'Sem categoria disponível';
+}
+
+function dados(){
+  const a=idade($('nascimento').value);
+  return {
+    aluno:$('aluno').value.trim(),
+    nascimento:$('nascimento').value,
+    escola:$('escola').value.trim(),
+    turno:$('turno').value,
+    profissaoPai:$('profissaoPai').value.trim(),
+    categoria:categoria(a),
+    responsavel:$('responsavel').value.trim(),
+    telefone:$('telefone').value.trim(),
+    cpf:$('cpf').value.trim(),
+    endereco:$('endereco').value.trim(),
+    matriculaValor:CONFIG.matriculaValor,
+    aceite:$('aceite').checked,
+    autorizacaoFisica:$('autorizacaoFisica').checked,
+    autorizacaoImagem:$('autorizacaoImagem').checked
+  };
+}
+
+function pix(){
+ return `Matrícula: R$ ${CONFIG.matriculaValor.toFixed(2).replace('.',',')}
+
+🔑 Pix: ${CONFIG.pixKey}
+👤 Recebedor: ${CONFIG.pixReceiver}
+🏦 Banco: ${CONFIG.pixBank}
+
+Após o pagamento, envie o comprovante pelo WhatsApp da Vida Esportiva.`;
+}
+
+function mostrar(tipo,texto,debug=''){
+  $('msg').className='msg '+tipo;
+  $('msg').style.display='block';
+  $('msg').innerHTML=texto;
+  if(debug){
+    $('debug').style.display='block';
+    $('debug').textContent=debug;
+  }
+}
+
+$('nascimento').addEventListener('change',atualizarCategoria);
+$('pixBox').textContent=pix();
+
+$('copyBtn').onclick=async()=>{
+ try{await navigator.clipboard.writeText(CONFIG.pixKey);alert('Chave Pix copiada!')}
+ catch(e){prompt('Copie a chave Pix:',CONFIG.pixKey)}
+};
+
+function payload(d){
+ return {
+  nome_aluno:d.aluno||'',
+  data_nascimento:d.nascimento||null,
+  escola:d.escola||'',
+  turno_escolar:d.turno||'',
+  nome_responsavel:d.responsavel||'',
+  telefone_responsavel:d.telefone||'',
+  categoria:d.categoria||'Sem categoria',
+  profissao_pai:d.profissaoPai||'',
+  responsavel:d.responsavel||'',
+  cpf:d.cpf||'',
+  endereco:d.endereco||'',
+  "autorização_física":!!d.autorizacaoFisica,
+  autorizacao_imagem:!!d.autorizacaoImagem,
+  aceite:!!d.aceite,
+  aluno:d.aluno||'',
+  nascimento:d.nascimento||'',
+  matricula_valor:Number(d.matriculaValor||0),
+  taxa_matricula:Number(d.matriculaValor||0)
+ };
+}
+
+async function enviarComSupabase(d){
+ if(!window.supabase || !window.supabase.createClient)
+   throw new Error('A biblioteca do Supabase não carregou.');
+
+ const client=window.supabase.createClient(CONFIG.supabaseUrl,CONFIG.supabaseKey,{
+   auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false},
+   global:{headers:{'x-client-info':'vida-esportiva-matricula'}}
+ });
+
+ const {error}=await client.from('matriculas').insert(payload(d));
+ if(error) throw error;
+}
+
+$('form').addEventListener('submit',async e=>{
+ e.preventDefault();
+ const d=dados();
+
+ if(!d.categoria){
+   mostrar('erro','❌ A idade informada não possui categoria disponível.');
+   return;
+ }
+
+ const btn=$('enviarBtn');
+ btn.disabled=true;
+ btn.textContent='ENVIANDO...';
+ $('debug').style.display='none';
+ $('msg').className='msg';
+ $('msg').style.display='block';
+ $('msg').textContent='Enviando matrícula...';
+
+ try{
+   await enviarComSupabase(d);
+   mostrar('ok','✅ <strong>Matrícula enviada com sucesso!</strong><br>Os dados foram registrados no sistema da Vida Esportiva.');
+   $('form').reset();
+   atualizarCategoria();
+   $('pixBox').textContent=pix();
+ }catch(err){
+   const nome=err?.name||'Erro';
+   const msg=err?.message||String(err);
+   const detail=[
+     'Tipo: '+nome,
+     'Mensagem: '+msg,
+     'Página: '+location.href,
+     'Origem segura (HTTPS): '+(location.protocol==='https:'?'SIM':'NÃO'),
+     'Supabase URL: '+CONFIG.supabaseUrl,
+     'Horário: '+new Date().toISOString()
+   ].join('\n');
+
+   mostrar(
+     'erro',
+     '❌ <strong>Não foi possível salvar a matrícula.</strong><br>'+
+     'O sistema identificou uma falha na comunicação com o banco.<br>'+
+     '<small>Se esta página estiver aberta como <b>content://</b> ou como arquivo baixado, abra-a pelo endereço HTTPS do GitHub Pages.</small>',
+     detail
+   );
+   console.error('Erro ao enviar matrícula:',err);
+ }finally{
+   btn.disabled=false;
+   btn.textContent='ENVIAR FICHA DE MATRÍCULA';
+ }
+});
+</script>
+</body>
+</html>
