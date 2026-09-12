@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Vida Esportiva • Gestão 360°</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--bg:#f4f7fb;--card:#fff;--text:#172033;--muted:#6b7280;--line:#e5e7eb;--accent:#0b6b3a;--accent2:#0a5130;--danger:#b42318}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--text)}
+header{background:linear-gradient(135deg,#0b6b3a,#0a5130);color:#fff;padding:18px 22px;position:sticky;top:0;z-index:5}
+header .top{max-width:1200px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:15px}
+h1{font-size:22px;margin:0}header small{opacity:.85}
+main{max-width:1200px;margin:22px auto;padding:0 14px}
+nav{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+button,.btn{border:0;border-radius:10px;padding:11px 14px;font-weight:700;cursor:pointer;background:var(--accent);color:#fff}
+button.secondary{background:#e8eef0;color:#17352a}button.danger{background:var(--danger)}
+button:disabled{opacity:.55;cursor:not-allowed}
+.card{background:var(--card);border:1px solid var(--line);border-radius:15px;padding:18px;box-shadow:0 2px 10px #00000008;margin-bottom:16px}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media(max-width:800px){.grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:520px){.grid{grid-template-columns:1fr}}
+.stat{padding:15px;border:1px solid var(--line);border-radius:12px}.stat b{display:block;font-size:25px;margin-top:4px}
+input,select,textarea{width:100%;padding:11px;border:1px solid #d1d5db;border-radius:9px;background:#fff;font-size:15px}
+label{display:block;font-weight:700;font-size:13px;margin-bottom:5px}.fields{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media(max-width:800px){.fields{grid-template-columns:1fr 1fr}}@media(max-width:520px){.fields{grid-template-columns:1fr}}
+.tablewrap{overflow:auto}table{width:100%;border-collapse:collapse;min-width:760px}th,td{padding:10px;border-bottom:1px solid var(--line);text-align:left;font-size:14px}th{background:#f8fafc}
+.hidden{display:none!important}.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.msg{padding:10px;border-radius:9px;margin:8px 0}.ok{background:#e8f7ee;color:#145c36}.err{background:#fdecec;color:#8a1c1c}.muted{color:var(--muted)}
+.modal{position:fixed;inset:0;background:#0008;display:flex;align-items:center;justify-content:center;padding:16px;z-index:20}.modalbox{background:#fff;border-radius:15px;padding:20px;width:min(760px,100%);max-height:90vh;overflow:auto}
+</style>
+</head>
+<body>
+<header><div class="top"><div><h1>⚽ Vida Esportiva • Gestão 360°</h1><small>Banco de dados sincronizado pelo Supabase</small></div><div id="userArea"></div></div></header>
+<main>
+<section id="login" class="card">
+<h2>Acesso à gestão</h2><p class="muted">Entre com o usuário cadastrado no Supabase Auth.</p>
+<div class="fields">
+<div><label>E-mail</label><input id="email" type="email" autocomplete="username"></div>
+<div><label>Senha</label><input id="password" type="password" autocomplete="current-password"></div>
+<div class="row" style="align-self:end"><button onclick="login()">Entrar</button><button class="secondary" onclick="signup()">Criar usuário</button></div>
+</div><div id="loginMsg"></div>
+</section>
+
+<section id="app" class="hidden">
+<nav>
+<button onclick="showPage('dashboard')">Painel</button><button onclick="showPage('alunos')">Alunos</button>
+<button onclick="showPage('pagamentos')">Pagamentos</button><button onclick="showPage('despesas')">Despesas</button>
+<button onclick="showPage('importar')">Importar CSV</button><button class="secondary" onclick="logout()">Sair</button>
+</nav>
+
+<div id="dashboard" class="page">
+<div class="grid">
+<div class="stat">Alunos ativos<b id="sAlunos">0</b></div>
+<div class="stat">Pagamentos<b id="sPag">R$ 0,00</b></div>
+<div class="stat">Despesas<b id="sDesp">R$ 0,00</b></div>
+<div class="stat">Saldo<b id="sSaldo">R$ 0,00</b></div>
+</div>
+<div class="card"><h2>Vida Esportiva</h2><p class="muted">Os dados gravados aqui ficam no Supabase e podem ser consultados no celular e no computador usando a mesma conta.</p></div>
+</div>
+
+<div id="alunos" class="page hidden">
+<div class="card"><div class="row" style="justify-content:space-between"><h2>Cadastro de alunos</h2><button onclick="novoAluno()">+ Novo aluno</button></div>
+<div class="row"><input id="buscaAluno" placeholder="Pesquisar nome, telefone ou categoria..." oninput="renderAlunos()"></div>
+<div class="tablewrap"><table><thead><tr><th>Nome</th><th>Categoria</th><th>Nascimento</th><th>Telefone</th><th>Responsável</th><th>Status</th><th>Ações</th></tr></thead><tbody id="alunosBody"></tbody></table></div></div>
+</div>
+
+<div id="pagamentos" class="page hidden">
+<div class="card"><div class="row" style="justify-content:space-between"><h2>Pagamentos</h2><button onclick="novoPagamento()">+ Registrar pagamento</button></div>
+<div class="tablewrap"><table><thead><tr><th>Data</th><th>Aluno</th><th>Descrição</th><th>Valor</th><th>Observação</th></tr></thead><tbody id="pagBody"></tbody></table></div></div>
+</div>
+
+<div id="despesas" class="page hidden">
+<div class="card"><div class="row" style="justify-content:space-between"><h2>Despesas</h2><button onclick="novaDespesa()">+ Registrar despesa</button></div>
+<div class="tablewrap"><table><thead><tr><th>Data</th><th>Descrição</th><th>Valor</th><th>Observação</th></tr></thead><tbody id="despBody"></tbody></table></div></div>
+</div>
+
+<div id="importar" class="page hidden">
+<div class="card"><h2>Importar dados do CSV</h2>
+<p>Selecione o CSV exportado do seu sistema. O arquivo atual da Vida Esportiva usa <b>ponto e vírgula (;)</b> como separador e as colunas TIPO, DATA, DESCRIÇÃO/NOME, CATEGORIA, VALOR e OBSERVAÇÃO.</p>
+<input id="csvFile" type="file" accept=".csv,text/csv">
+<div class="row" style="margin-top:12px"><button onclick="importCSV()">Importar para o Supabase</button></div>
+<div id="importMsg"></div></div>
+</div>
+</section>
+</main>
+
+<div id="modal" class="modal hidden"><div class="modalbox"><div class="row" style="justify-content:space-between"><h2 id="modalTitle"></h2><button class="secondary" onclick="closeModal()">Fechar</button></div><div id="modalBody"></div></div></div>
+
+<script>
+const SUPABASE_URL = "https://rlpawoxizugzrsniorc.supabase.co";
+const SUPABASE_KEY = "sb_publishable_fsdNaZ7hzFgxpqB5gGGKRA_mP7daLYJ";
+const sb = supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+let alunos=[], pagamentos=[], despesas=[];
+
+const brl=v=>(Number(v)||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
+const msg=(id,text,ok=true)=>document.getElementById(id).innerHTML=`<div class="msg ${ok?'ok':'err'}">${esc(text)}</div>`;
+
+async function init(){
+ const {data:{session}}=await sb.auth.getSession();
+ if(session) enterApp(session); else document.getElementById('login').classList.remove('hidden');
+ sb.auth.onAuthStateChange((_e,session)=>{if(session) enterApp(session);});
+}
+async function login(){
+ const {error}=await sb.auth.signInWithPassword({email:email.value.trim(),password:password.value});
+ if(error) msg('loginMsg',error.message,false);
+}
+async function signup(){
+ const {error}=await sb.auth.signUp({email:email.value.trim(),password:password.value});
+ if(error) msg('loginMsg',error.message,false); else msg('loginMsg','Usuário criado. Verifique o e-mail se o Supabase solicitar confirmação.');
+}
+async function logout(){await sb.auth.signOut();location.reload();}
+function enterApp(session){document.getElementById('login').classList.add('hidden');document.getElementById('app').classList.remove('hidden');document.getElementById('userArea').textContent=session.user.email;loadAll();}
+function showPage(p){document.querySelectorAll('.page').forEach(x=>x.classList.add('hidden'));document.getElementById(p).classList.remove('hidden');if(p==='alunos')renderAlunos();if(p==='pagamentos')renderPagamentos();if(p==='despesas')renderDespesas();}
+async function loadAll(){
+ const a=await sb.from('alunos').select('*').order('nome'); if(a.error){alert('Erro ao carregar alunos: '+a.error.message);return}
+ const p=await sb.from('pagamentos').select('*').order('data',{ascending:false}); if(p.error){alert('Erro ao carregar pagamentos: '+p.error.message);return}
+ const d=await sb.from('despesas').select('*').order('data',{ascending:false}); if(d.error){alert('Erro ao carregar despesas: '+d.error.message);return}
+ alunos=a.data||[];pagamentos=p.data||[];despesas=d.data||[];renderDashboard();renderAlunos();renderPagamentos();renderDespesas();
+}
+function renderDashboard(){
+ document.getElementById('sAlunos').textContent=alunos.filter(x=>String(x.status||'Ativo').toLowerCase()!=='inativo').length;
+ const pi=pagamentos.reduce((s,x)=>s+Number(x.valor||0),0), de=despesas.reduce((s,x)=>s+Number(x.valor||0),0);
+ document.getElementById('sPag').textContent=brl(pi);document.getElementById('sDesp').textContent=brl(de);document.getElementById('sSaldo').textContent=brl(pi-de);
+}
+function renderAlunos(){
+ const q=(document.getElementById('buscaAluno')?.value||'').toLowerCase();
+ const list=alunos.filter(x=>[x.nome,x.telefone,x.categoria,x.responsavel].join(' ').toLowerCase().includes(q));
+ document.getElementById('alunosBody').innerHTML=list.map(x=>`<tr><td>${esc(x.nome)}</td><td>${esc(x.categoria)}</td><td>${esc(x.nascimento||'')}</td><td>${esc(x.telefone||'')}</td><td>${esc(x.responsavel||'')}</td><td>${esc(x.status||'Ativo')}</td><td><button onclick="editarAluno('${x.id}')">Editar</button></td></tr>`).join('')||'<tr><td colspan="7">Nenhum aluno encontrado.</td></tr>';
+}
+function renderPagamentos(){
+ document.getElementById('pagBody').innerHTML=pagamentos.map(x=>`<tr><td>${esc(x.data)}</td><td>${esc(x.aluno_nome||x.aluno_id||'')}</td><td>${esc(x.descricao)}</td><td>${brl(x.valor)}</td><td>${esc(x.observacao||'')}</td></tr>`).join('')||'<tr><td colspan="5">Nenhum pagamento.</td></tr>';
+}
+function renderDespesas(){
+ document.getElementById('despBody').innerHTML=despesas.map(x=>`<tr><td>${esc(x.data)}</td><td>${esc(x.descricao)}</td><td>${brl(x.valor)}</td><td>${esc(x.observacao||'')}</td></tr>`).join('')||'<tr><td colspan="4">Nenhuma despesa.</td></tr>';
+}
+function modal(title,body){document.getElementById('modalTitle').textContent=title;document.getElementById('modalBody').innerHTML=body;document.getElementById('modal').classList.remove('hidden')}
+function closeModal(){document.getElementById('modal').classList.add('hidden')}
+function novoAluno(){modal('Novo aluno',alunoForm({}))}
+function editarAluno(id){const x=alunos.find(a=>a.id===id);modal('Editar aluno',alunoForm(x))}
+function alunoForm(x){
+ return `<div class="fields">
+ <div><label>Nome *</label><input id="f_nome" value="${esc(x.nome||'')}"></div>
+ <div><label>Categoria</label><input id="f_cat" value="${esc(x.categoria||'')}"></div>
+ <div><label>Nascimento</label><input id="f_nasc" type="date" value="${esc(x.nascimento||'')}"></div>
+ <div><label>Telefone</label><input id="f_tel" value="${esc(x.telefone||'')}"></div>
+ <div><label>Responsável</label><input id="f_resp" value="${esc(x.responsavel||'')}"></div>
+ <div><label>Status</label><select id="f_status"><option ${x.status==='Ativo'||!x.status?'selected':''}>Ativo</option><option ${x.status==='Inativo'?'selected':''}>Inativo</option></select></div>
+ </div><div class="row" style="margin-top:15px"><button onclick="saveAluno('${x.id||''}')">Salvar</button></div>`;
+}
+async function saveAluno(id){
+ const payload={nome:f_nome.value.trim(),categoria:f_cat.value.trim(),nascimento:f_nasc.value||null,telefone:f_tel.value.trim(),responsavel:f_resp.value.trim(),status:f_status.value};
+ if(!payload.nome)return alert('Informe o nome.');
+ const r=id?await sb.from('alunos').update(payload).eq('id',id):await sb.from('alunos').insert(payload);
+ if(r.error)return alert(r.error.message);closeModal();await loadAll();
+}
+function novoPagamento(){modal('Registrar pagamento',`<div class="fields"><div><label>Aluno</label><select id="p_aluno">${alunos.map(a=>`<option value="${esc(a.id)}">${esc(a.nome)}</option>`).join('')}</select></div><div><label>Data</label><input id="p_data" type="date" value="${new Date().toISOString().slice(0,10)}"></div><div><label>Descrição</label><input id="p_desc" value="Mensalidade"></div><div><label>Valor</label><input id="p_val" type="number" step="0.01" value="70"></div><div><label>Observação</label><input id="p_obs"></div></div><div class="row" style="margin-top:15px"><button onclick="savePagamento()">Salvar</button></div>`)}
+async function savePagamento(){
+ const a=alunos.find(x=>x.id===p_aluno.value);const payload={aluno_id:p_aluno.value,aluno_nome:a?.nome||'',data:p_data.value,descricao:p_desc.value.trim(),valor:Number(p_val.value),observacao:p_obs.value.trim()};
+ const r=await sb.from('pagamentos').insert(payload);if(r.error)return alert(r.error.message);closeModal();await loadAll();
+}
+function novaDespesa(){modal('Registrar despesa',`<div class="fields"><div><label>Data</label><input id="d_data" type="date" value="${new Date().toISOString().slice(0,10)}"></div><div><label>Descrição</label><input id="d_desc"></div><div><label>Valor</label><input id="d_val" type="number" step="0.01"></div><div><label>Observação</label><input id="d_obs"></div></div><div class="row" style="margin-top:15px"><button onclick="saveDespesa()">Salvar</button></div>`)}
+async function saveDespesa(){
+ const r=await sb.from('despesas').insert({data:d_data.value,descricao:d_desc.value.trim(),valor:Number(d_val.value),observacao:d_obs.value.trim()});if(r.error)return alert(r.error.message);closeModal();await loadAll();
+}
+function parseCSV(text){
+ const lines=text.replace(/\r/g,'').split('\n').filter(x=>x.trim());if(!lines.length)return [];
+ const sep=lines[0].includes(';')?';':',';const parse=l=>{let out=[],cur='',q=false;for(let i=0;i<l.length;i++){let c=l[i];if(c==='"'){if(q&&l[i+1]==='"'){cur+='"';i++;}else q=!q}else if(c===sep&&!q){out.push(cur);cur=''}else cur+=c}out.push(cur);return out};
+ const headers=parse(lines[0]).map(x=>x.trim().toUpperCase());return lines.slice(1).map(l=>{const v=parse(l),o={};headers.forEach((h,i)=>o[h]=v[i]??'');return o});
+}
+async function importCSV(){
+ const file=document.getElementById('csvFile').files[0];if(!file)return msg('importMsg','Selecione um CSV.',false);
+ const rows=parseCSV(await file.text());let ca=0,cp=0,cd=0,er=0;
+ for(const r of rows){
+   const tipo=(r['TIPO']||'').trim().toUpperCase(), nome=(r['DESCRIÇÃO/NOME']||'').trim();
+   const valor=Number(String(r['VALOR']||'0').replace(/\./g,'').replace(',','.'))||0;
+   try{
+    if(tipo.includes('ALUNO')){
+      const q=await sb.from('alunos').upsert({nome,categoria:r['CATEGORIA']||'',telefone:r['OBSERVAÇÃO']||'',status:'Ativo'},{onConflict:'nome'});
+      if(q.error)throw q.error;ca++;
+    }else if(tipo.includes('PAG')){
+      const q=await sb.from('pagamentos').insert({data:r['DATA']||null,descricao:nome,valor,observacao:r['OBSERVAÇÃO']||''});
+      if(q.error)throw q.error;cp++;
+    }else if(tipo.includes('DESP')){
+      const q=await sb.from('despesas').insert({data:r['DATA']||null,descricao:nome,valor,observacao:r['OBSERVAÇÃO']||''});
+      if(q.error)throw q.error;cd++;
+    }
+   }catch(e){er++}
+ }
+ msg('importMsg',`Importação concluída: ${ca} alunos, ${cp} pagamentos, ${cd} despesas. Erros: ${er}.`,er===0);await loadAll();
+}
+init();
+</script>
+</body>
+</html>
