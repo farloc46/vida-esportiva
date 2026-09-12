@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#004d2a">
+<title>Vida Esportiva • Gestão 360°</title>
+<style>
+:root{--green:#004d2a;--green2:#006b3c;--light:#f4f7f5;--blue:#0969d7;--red:#d92d3f;--yellow:#e9a900;--text:#17201b;--muted:#6b756f;--card:#fff;--border:#e1e7e3}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--light);color:var(--text)}
+button,input,select{font:inherit}button{cursor:pointer;border:0}.app{display:flex;min-height:100vh}
+.sidebar{width:245px;background:var(--green);color:white;padding:16px 12px;position:fixed;left:0;top:0;bottom:0;overflow:auto}
+.brand{display:flex;align-items:center;gap:10px;padding:8px 7px 18px;border-bottom:1px solid #ffffff22;margin-bottom:12px}
+.logo{width:42px;height:42px;border-radius:9px;background:white;color:#68a52e;display:grid;place-items:center;font-weight:900;font-size:11px;text-align:center}
+.brand b{font-size:15px}.brand small{display:block;opacity:.75;margin-top:3px}
+.nav button{display:block;width:100%;text-align:left;background:transparent;color:#e8fff2;padding:11px 10px;border-radius:8px;margin:2px 0;font-size:14px}
+.nav button:hover,.nav button.active{background:#087042}.section{font-size:10px;text-transform:uppercase;opacity:.55;margin:18px 10px 5px}
+.main{margin-left:245px;width:calc(100% - 245px);padding:28px;min-width:0}.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+h1{font-size:24px;margin:0 0 4px}.sub{color:var(--muted);font-size:13px}.actions{display:flex;gap:8px}.btn{padding:10px 14px;border-radius:7px;background:#fff;border:1px solid var(--border);font-weight:700}.btn.green{background:var(--green2);color:white;border-color:var(--green2)}.btn.blue{background:var(--blue);color:white;border-color:var(--blue)}.btn.red{background:var(--red);color:white}.btn.small{padding:7px 10px;font-size:12px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:11px;padding:16px;box-shadow:0 2px 8px #1231  }.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.metric{border-left:4px solid var(--green2)}.metric.yellow{border-left-color:var(--yellow)}.metric.red{border-left-color:var(--red)}.metric.blue{border-left-color:var(--blue)}.metric span{font-size:12px;color:var(--muted)}.metric strong{display:block;font-size:22px;margin-top:8px}
+.filters{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;margin-bottom:14px}.field label{display:block;font-size:11px;font-weight:700;margin:0 0 5px}.field input,.field select{width:100%;padding:10px;border:1px solid var(--border);border-radius:7px;background:white}
+.tablewrap{overflow:auto}.table{width:100%;border-collapse:collapse;font-size:13px}.table th,.table td{text-align:left;padding:12px 9px;border-bottom:1px solid var(--border);white-space:nowrap}.table th{font-size:11px;color:var(--muted);background:#fafcfb}.status{display:inline-block;padding:4px 8px;border-radius:20px;font-size:10px;font-weight:700}.paid{background:#d9f7e7;color:#087443}.late{background:#fde0e3;color:#b42336}.open{background:#fff0c7;color:#875c00}
+.page{display:none}.page.active{display:block}.notice{padding:12px;background:#eef7f1;border:1px solid #cde6d6;border-radius:8px;margin-bottom:15px;font-size:13px}
+.modalbg{display:none;position:fixed;inset:0;background:#0008;z-index:20;align-items:center;justify-content:center;padding:15px}.modalbg.show{display:flex}.modal{width:min(650px,100%);max-height:92vh;overflow:auto;background:white;border-radius:12px;padding:18px}.modalhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.close{background:#f0f2f1;border-radius:50%;width:30px;height:30px}.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:11px}.full{grid-column:1/-1}.manual{display:none;margin-top:8px}.manual.show{display:block}.toast{position:fixed;right:20px;bottom:20px;background:#17201b;color:white;padding:12px 16px;border-radius:8px;display:none;z-index:50}.empty{padding:35px;text-align:center;color:var(--muted)}
+@media(max-width:900px){.sidebar{width:210px}.main{margin-left:210px;width:calc(100% - 210px);padding:18px}.grid{grid-template-columns:1fr 1fr}.filters{grid-template-columns:1fr 1fr}}
+@media(max-width:650px){.sidebar{width:64px;padding:10px 6px}.brand b,.brand small,.nav button span,.section{display:none}.brand{justify-content:center;border:0}.main{margin-left:64px;width:calc(100% - 64px);padding:12px}.grid,.filters,.formgrid{grid-template-columns:1fr}.top{align-items:flex-start;gap:10px;flex-wrap:wrap}.actions{flex-wrap:wrap}.nav button{text-align:center;padding:12px 5px}.nav button{font-size:18px}}
+
+/* Relatórios e impressão */
+.report-toolbar{display:grid;grid-template-columns:1.2fr 1fr 1fr auto;gap:10px;margin-bottom:14px}
+.report-title{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px}
+.report-meta{color:var(--muted);font-size:12px}
+.report-table th,.report-table td{white-space:normal}
+@media(max-width:900px){.report-toolbar{grid-template-columns:1fr 1fr}}
+@media(max-width:650px){.report-toolbar{grid-template-columns:1fr}.report-table{font-size:11px}.report-table th,.report-table td{padding:8px 6px}}
+@media print{
+  body{background:#fff}
+  .sidebar,.firebaseUserBar,.top .actions,#loginScreen,.nav,.toast{display:none!important}
+  .main{margin:0;width:100%;padding:0}
+  .page{display:none!important}
+  #relatorios{display:block!important}
+  #relatorios .no-print{display:none!important}
+  #relatorioPrintArea{box-shadow:none;border:0;padding:0}
+  .card{box-shadow:none;border:1px solid #ddd}
+  h1{font-size:20px}
+  .report-table{font-size:10px}
+}
+
+<style>
+@media (max-width: 760px){
+  .tablewrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .table{min-width:780px}
+  .table th:first-child,.table td:first-child{min-width:190px}
+  .modal{width:min(94vw,620px);max-height:90vh;overflow:auto}
+}
+</style>
+</style>
+</head>
+<body>
+
+<div id="loginScreen" style="position:fixed;inset:0;background:linear-gradient(135deg,#003b20,#006b3c);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px">
+  <div style="width:min(420px,100%);background:#fff;border-radius:18px;padding:28px;box-shadow:0 20px 60px #0006">
+    <div style="text-align:center;margin-bottom:22px">
+      <div style="display:inline-grid;place-items:center;width:64px;height:64px;border-radius:14px;background:#004d2a;color:#fff;font-weight:900;font-size:13px;line-height:1.05">VIDA<br>ESPORTIVA</div>
+      <h2 style="margin:14px 0 4px">Gestão 360°</h2>
+      <div style="color:#6b756f;font-size:13px">Acesso do administrador</div>
+    </div>
+    <div class="field" style="margin-bottom:12px"><label>E-mail</label><input id="loginEmail" type="email" autocomplete="username" placeholder="Seu e-mail"></div>
+    <div class="field" style="margin-bottom:12px"><label>Senha</label><input id="loginPassword" type="password" autocomplete="current-password" placeholder="Sua senha" onkeydown="if(event.key==='Enter')entrarSistema()"></div>
+    <button id="loginBtn" class="btn green" style="width:100%" onclick="entrarSistema()">Entrar no sistema</button>
+    <div id="loginError" style="display:none;margin-top:12px;padding:10px;border-radius:8px;background:#fde0e3;color:#b42336;font-size:13px"></div>
+    <div style="margin-top:16px;text-align:center;color:#7a847e;font-size:11px">Dados sincronizados pelo Firebase</div>
+  </div>
+</div>
+
+<div class="app">
+<aside class="sidebar">
+  <div class="brand"><div class="logo">VIDA<br>ESPORTIVA</div><div><b>Vida Esportiva</b><small>Gestão 360°</small></div></div>
+  <div class="nav">
+    <button data-page="dashboard">📊 <span>Dashboard</span></button>
+    <button data-page="alunos">👥 <span>Cadastro de alunos</span></button>
+    <button data-page="mensalidades" class="active">💰 <span>Mensalidades</span></button>
+    <button data-page="planos">📋 <span>Planos e contratos</span></button>
+    <button data-page="inadimplentes">🔴 <span>Inadimplentes</span></button>
+    <button data-page="cobrancas">📣 <span>Cobranças</span></button>
+    <button data-page="despesas">🛠️ <span>Despesas</span></button>
+    <button data-page="caixa">💵 <span>Caixa financeiro</span></button>
+    <button data-page="historico">🕘 <span>Histórico de alterações</span></button>
+    <button data-page="relatorios">📄 <span>Relatórios</span></button>
+    <button data-page="backup">💾 <span>Backup e dados</span></button>
+    <button data-page="config">🔑 <span>Configurações</span></button>
+    <button data-page="escola">⚽ <span>Escola</span></button>
+    <button data-page="mensagens">💬 <span>Mensagem WhatsApp</span></button>
+    <button data-page="matricula">📝 <span>Matrícula online Forms</span></button>
+    <button data-page="usuarios">👤 <span>Usuários e permissões</span></button>
+    <div class="section">Categorias</div>
+    <button onclick="abrirRelatorioCategoria('5-7 anos')">⚽ <span>5–7 anos</span></button>
+    <button onclick="abrirRelatorioCategoria('8-10 anos')">🟢 <span>8–10 anos</span></button>
+    <button onclick="abrirRelatorioCategoria('12-14 anos')">⚽ <span>12–14 anos</span></button>
+    <button onclick="abrirRelatorioCategoria('Sem categoria')">⚪ <span>Sem categoria</span></button>
+    <div class="section">Turmas</div>
+    <button onclick="abrirRelatorioTurma('5–7 anos')">⚽ <span>5–7 anos</span></button>
+    <button onclick="abrirRelatorioTurma('Terça e Quinta — 8–10 anos')">🟢 <span>Terça e Quinta — 8–10 anos</span></button>
+    <button onclick="abrirRelatorioTurma('Quarta e Sexta — 8–10 anos')">🔵 <span>Quarta e Sexta — 8–10 anos</span></button>
+    <button onclick="abrirRelatorioTurma('12–14 anos')">⚽ <span>12–14 anos</span></button>
+    <button onclick="abrirRelatorioTurma('Sem categoria')">⚪ <span>Sem categoria</span></button>
+    <button onclick="abrirRelatorioTurma('Sem turma definida')">⚪ <span>Sem turma definida</span></button>
+    <button onclick="abrirRelatorioTurma('Todas as turmas')">📊 <span>Todas as turmas</span></button>
+  </div>
+</aside>
+
+<main class="main">
+<div id="firebaseUserBar" style="display:none;margin:-10px 0 18px;padding:8px 12px;background:#eef7f1;border:1px solid #cde6d6;border-radius:8px;font-size:12px;justify-content:space-between;align-items:center;gap:10px">
+  <span>☁️ Conectado ao Firebase: <b id="firebaseUserEmail"></b></span>
+  <button class="btn small" onclick="sairSistema()">Sair</button>
+</div>
+
+<!-- DASHBOARD -->
+<section id="dashboard" class="page">
+<div class="top"><div><h1>Dashboard</h1><div class="sub">Visão geral da Vida Esportiva Gestão 360°</div></div></div>
+<div class="grid">
+<div class="card metric"><span>Alunos ativos</span><strong id="dashAlunos">70</strong></div>
+<div class="card metric yellow"><span>A receber</span><strong id="dashReceber">R$ 0,00</strong></div>
+<div class="card metric red"><span>Em atraso</span><strong id="dashAtrasado">R$ 0,00</strong></div>
+<div class="card metric blue"><span>Recebido no mês</span><strong id="dashPago">R$ 0,00</strong></div>
+</div>
+<br><div class="card"><h3>Resumo</h3><p class="sub">Use o menu lateral para administrar alunos, mensalidades, cobranças, despesas e relatórios.</p></div>
+</section>
+
+<!-- ALUNOS -->
+<section id="alunos" class="page">
+<div class="top"><div><h1>Cadastro de alunos</h1><div class="sub">Alunos da Escola de Esportes Vida Esportiva</div></div><button class="btn green" onclick="openAluno()">+ Novo aluno</button></div>
+<div class="card"><div class="filters"><div class="field"><label>Pesquisar</label><input id="buscaAluno" placeholder="Nome, responsável..." oninput="renderAlunos()"></div><div class="field"><label>Categoria</label><select id="filtroCat" onchange="renderAlunos()"><option>Todos</option><option>5-7 anos</option><option>8-10 anos</option><option>12-14 anos</option><option>Sem categoria</option></select></div><div class="field"><label>Turma</label><select id="filtroTurmaAlunos" onchange="renderAlunos()"><option>Todas as turmas</option><option>5–7 anos</option><option>Terça e Quinta — 8–10 anos</option><option>Quarta e Sexta — 8–10 anos</option><option>12–14 anos</option><option>Sem categoria</option><option>Sem turma definida</option></select></div><div class="field"><label>Status</label><select id="filtroStatusAluno" onchange="renderAlunos()"><option>Todos</option><option>Ativos</option><option>Inativos</option></select></div></div>
+<div class="tablewrap"><table class="table"><thead><tr><th>Aluno</th><th>Responsável</th><th>Categoria</th><th>Turma</th><th>Status</th><th>Ação</th></tr></thead><tbody id="alunosBody"></tbody></table></div></div>
+</section>
+
+<!-- MENSALIDADES -->
+<section id="mensalidades" class="page active">
+<div class="top"><div><h1>Mensalidades</h1><div class="sub">Escola de Futebol Vida Esportiva</div></div><div class="actions"><button class="btn green" onclick="openAluno()">+ Novo aluno</button><button class="btn blue" onclick="openPagamento()">+ Mensalidade</button></div></div>
+<div class="card">
+<div class="filters">
+<div class="field"><label>Competência</label><select id="competencia" onchange="renderMensalidades()"></select></div>
+<div class="field"><label>Pesquisar</label><input id="buscaMens" placeholder="Aluno, responsável ou categoria..." oninput="renderMensalidades()"></div>
+<div class="field"><label>Status</label><select id="filtroStatus" onchange="renderMensalidades()"><option>Todos</option><option>Pago</option><option>Em aberto</option><option>Atrasado</option></select></div>
+<div class="field"><label>&nbsp;</label><button class="btn" style="width:100%" onclick="gerarCompetencia()">⚙️ Gerar competência</button></div>
+</div>
+<div class="notice">⚙️ Mês atual gerado automaticamente. O pagamento é vinculado à competência escolhida.</div>
+<div class="grid">
+<div class="card metric"><span>Pagos</span><strong id="mPago">R$ 0,00</strong></div>
+<div class="card metric yellow"><span>A receber</span><strong id="mReceber">R$ 0,00</strong></div>
+<div class="card metric red"><span>Em atraso</span><strong id="mAtrasado">R$ 0,00</strong></div>
+<div class="card metric blue"><span>Mensalidades</span><strong id="mQtd">0</strong></div>
+</div><br>
+<div class="tablewrap"><table class="table"><thead><tr><th>Aluno</th><th>Categoria</th><th>Competência</th><th>Vencimento</th><th>Valor</th><th>Pagamento</th><th>Status</th><th>Ação</th></tr></thead><tbody id="mensBody"></tbody></table></div>
+</div></section>
+
+<section id="planos" class="page"><div class="top"><div><h1>Planos e contratos</h1><div class="sub">Valores e regras financeiras</div></div></div><div class="card"><h3>Valores cadastrados</h3><table class="table"><tr><th>Descrição</th><th>Valor</th></tr><tr><td>Plano Mensal</td><td>R$ 144,90</td></tr><tr><td>Mensalidade com desconto</td><td>R$ 70,00</td></tr><tr><td>Matrícula</td><td>R$ 150,00</td></tr><tr><td>Outro</td><td>Definido manualmente</td></tr></table></div></section>
+
+<section id="inadimplentes" class="page"><div class="top"><div><h1>Inadimplentes</h1><div class="sub">Mensalidades em atraso</div></div></div><div class="card"><div class="tablewrap"><table class="table"><thead><tr><th>Aluno</th><th>Competência</th><th>Valor</th><th>Status</th><th>Ação</th></tr></thead><tbody id="inadBody"></tbody></table></div></div></section>
+<section id="cobrancas" class="page"><div class="top"><div><h1>Cobranças</h1><div class="sub">Envio de lembretes aos responsáveis</div></div></div><div class="card"><h3>Mensagem padrão</h3><textarea id="msgCobranca" style="width:100%;min-height:130px;padding:10px;border:1px solid var(--border);border-radius:7px">Olá! Passando para lembrar sobre a mensalidade da Vida Esportiva. Em caso de dúvida, entre em contato com a coordenação.</textarea><br><br><button class="btn green" onclick="toast('Mensagem preparada para envio pelo WhatsApp.')">📲 Preparar cobrança</button></div></section>
+<section id="despesas" class="page"><div class="top"><div><h1>Despesas</h1><div class="sub">Controle de despesas da escola</div></div><button class="btn green" onclick="openDespesa()">+ Nova despesa</button></div><div class="card"><div class="tablewrap"><table class="table"><thead><tr><th>Descrição</th><th>Data</th><th>Valor</th></tr></thead><tbody id="despBody"></tbody></table></div></div></section>
+<section id="caixa" class="page"><div class="top"><div><h1>Caixa financeiro</h1><div class="sub">Entradas e saídas</div></div></div><div class="grid"><div class="card metric"><span>Total de entradas</span><strong id="caixaEntradas">R$ 0,00</strong></div><div class="card metric red"><span>Total de despesas</span><strong id="caixaSaidas">R$ 0,00</strong></div><div class="card metric blue"><span>Saldo</span><strong id="caixaSaldo">R$ 0,00</strong></div></div></section>
+<section id="historico" class="page"><div class="top"><div><h1>Histórico de alterações</h1><div class="sub">Registros realizados no sistema</div></div></div><div class="card"><div id="histBody" class="empty">Nenhuma alteração registrada.</div></div></section>
+<section id="relatorios" class="page">
+<div class="top"><div><h1>Relatórios</h1><div class="sub">Relatório específico por turma e competência</div></div><div class="actions no-print"><button class="btn blue" onclick="imprimirRelatorio()">🖨️ Imprimir relatório</button></div></div>
+<div class="card no-print">
+  <div class="report-toolbar">
+    <div class="field"><label>Turma</label><select id="relatorioTurma" onchange="renderRelatorio()"><option>5–7 anos</option><option>Terça e Quinta — 8–10 anos</option><option>Quarta e Sexta — 8–10 anos</option><option>12–14 anos</option><option>Sem categoria</option><option>Sem turma definida</option><option>Todas as turmas</option></select></div>
+    <div class="field"><label>Competência</label><select id="relatorioComp" onchange="renderRelatorio()"></select></div>
+    <div class="field"><label>Pesquisar aluno</label><input id="relatorioBusca" placeholder="Nome, responsável ou telefone" oninput="renderRelatorio()"></div>
+    <div class="field"><label>&nbsp;</label><button class="btn green" style="width:100%" onclick="renderRelatorio()">🔄 Atualizar</button></div>
+  </div>
+</div>
+<div id="relatorioPrintArea" class="card">
+  <div class="report-title"><div><h2 id="relatorioTitulo" style="margin:0 0 4px">Relatório da turma</h2><div id="relatorioSubtitulo" class="report-meta"></div></div><div class="report-meta">Vida Esportiva • Gestão 360°</div></div>
+  <div class="grid">
+    <div class="card metric"><span>👥 Total de alunos ativos</span><strong id="relTotal">0</strong></div>
+    <div class="card metric"><span>🟢 Alunos pagantes</span><strong id="relPagantes">0</strong></div>
+    <div class="card metric red"><span>🔴 Alunos inadimplentes</span><strong id="relInadimplentes">0</strong></div>
+    <div class="card metric yellow"><span>💰 Valor total em atraso</span><strong id="relAtraso">R$ 0,00</strong></div>
+  </div>
+  <br>
+  <div class="grid" style="grid-template-columns:1fr 1fr">
+    <div class="card metric yellow"><span>🟡 Pendentes/futuros</span><strong id="relPendentes">0</strong></div>
+    <div class="card metric blue"><span>💵 Valor previsto da turma</span><strong id="relPrevisto">R$ 0,00</strong></div>
+  </div>
+  <br>
+  <div class="tablewrap"><table class="table report-table"><thead><tr><th>Nome do aluno</th><th>Responsável</th><th>Telefone</th><th>Turma</th><th>Valor da mensalidade</th><th>Situação na competência</th></tr></thead><tbody id="relatorioBody"></tbody></table></div>
+  <div id="relatorioRodape" class="report-meta" style="margin-top:12px"></div>
+</div>
+</section>
+<section id="backup" class="page"><div class="top"><div><h1>Backup e dados</h1><div class="sub">Dados sincronizados na nuvem pelo Firebase</div></div></div><div class="card">
+<div class="notice">☁️ O banco principal está no Firebase. Você pode exportar uma cópia JSON e importar o CSV dos seus alunos, pagamentos e despesas.</div>
+<button class="btn green" onclick="exportar()">⬇️ Exportar backup JSON</button>
+<label class="btn">⬆️ Importar backup JSON<input type="file" accept=".json" onchange="importar(event)" style="display:none"></label>
+<hr style="border:0;border-top:1px solid var(--border);margin:18px 0">
+<h3>Importar dados da planilha</h3>
+<p class="sub">Selecione o CSV exportado do Google Planilhas. A importação grava alunos, pagamentos e despesas no Firestore sem usar o armazenamento local como banco principal.</p>
+<label class="btn blue">📥 Selecionar CSV<input id="csvInput" type="file" accept=".csv,text/csv" onchange="importarCSV(event)" style="display:none"></label>
+<div id="importStatus" class="sub" style="margin-top:12px"></div>
+</div></section>
+<section id="config" class="page"><div class="top"><div><h1>Configurações</h1><div class="sub">Configurações do sistema</div></div></div><div class="card"><div class="field"><label>Nome da escola</label><input value="Escola de Esportes Vida Esportiva"></div><br><div class="field"><label>Slogan</label><input value="Antes de formar um atleta, nossa missão é formar um cidadão."></div></div></section>
+<section id="escola" class="page"><div class="top"><div><h1>Escola</h1><div class="sub">Informações institucionais</div></div></div><div class="card"><h2>Vida Esportiva</h2><p>Escola de Esportes Vida Esportiva • Gestão 360°</p><p>Atuação esportiva e educacional, com foco em inclusão, disciplina e formação cidadã.</p></div></section>
+<section id="mensagens" class="page"><div class="top"><div><h1>Mensagem WhatsApp</h1><div class="sub">Modelos de comunicação</div></div></div><div class="card"><textarea style="width:100%;min-height:150px;padding:10px;border:1px solid var(--border);border-radius:7px">Olá, família! Tudo bem? A Vida Esportiva está passando para manter nosso contato sempre próximo. Qualquer dúvida, estamos à disposição da coordenação.</textarea></div></section>
+<section id="matricula" class="page"><div class="top"><div><h1>Matrícula online</h1><div class="sub">Google Forms</div></div></div><div class="card"><h3>Formulário de matrícula</h3><p class="sub">Configure abaixo o endereço do seu Google Forms.</p><input id="formsUrl" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:7px" placeholder="Cole aqui o link do Google Forms"><br><br><button class="btn green" onclick="abrirForms()">📝 Abrir matrícula online</button></div></section>
+<section id="usuarios" class="page"><div class="top"><div><h1>Usuários e permissões</h1><div class="sub">Controle de acesso</div></div></div><div class="card"><table class="table"><tr><th>Usuário</th><th>Perfil</th><th>Status</th></tr><tr><td>Administrador</td><td>Administrador</td><td><span class="status paid">Ativo</span></td></tr></table></div></section>
+</main></div>
+
+<!-- MODAL PAGAMENTO -->
+<div class="modalbg" id="pagModal"><div class="modal">
+<div class="modalhead"><h2 style="margin:0">Registrar pagamento</h2><button class="close" onclick="closeModal('pagModal')">×</button></div>
+<div class="formgrid">
+<div class="field"><label>Aluno *</label><select id="pagAluno"></select></div>
+<div class="field"><label>Categoria</label><input id="pagCat" readonly></div>
+<div class="field"><label>Mês de referência</label><select id="pagComp"></select></div>
+<div class="field"><label>Data do pagamento</label><input type="date" id="pagData"></div>
+<div class="field"><label>Valor *</label>
+<select id="pagValor" onchange="toggleManual()">
+<option value="100">R$ 100,00 — Matrícula</option>
+<option value="150">R$ 150,00 — Matrícula</option>
+<option value="144.90" selected>R$ 144,90 — Mensalidade</option>
+<option value="70">R$ 70,00 — Mensalidade com desconto</option>
+<option value="manual">Outro valor — Digitar manualmente</option>
+</select>
+<div class="manual" id="manualWrap"><input id="pagManual" type="number" step="0.01" min="0" placeholder="Digite o valor"></div>
+</div>
+<div class="field"><label>Forma de pagamento</label><select id="pagForma"><option>Pix</option><option>Dinheiro</option><option>Cartão</option><option>Boleto</option><option>Transferência</option></select></div>
+<div class="full"><button class="btn blue" onclick="registrarPagamento()">Registrar pagamento</button></div>
+</div></div></div>
+
+<!-- MODAL ALUNO -->
+<div class="modalbg" id="alunoModal"><div class="modal">
+<div class="modalhead"><h2 style="margin:0">Novo aluno</h2><button class="close" onclick="closeModal('alunoModal')">×</button></div>
+<div class="formgrid">
+<div class="field full"><label>Aluno *</label><input id="novoNome" placeholder="Nome completo"></div>
+<div class="field"><label>Responsável</label><input id="novoResp" placeholder="Nome do responsável"></div>
+<div class="field"><label>Categoria</label><select id="novoCat"><option>5-7 anos</option><option>8-10 anos</option><option>12-14 anos</option><option>Sem categoria</option></select></div>
+<div class="field full"><label><b>Turma (escolha manual)</b></label><select id="novoTurma"><option>5–7 anos</option><option>Terça e Quinta — 8–10 anos</option><option>Quarta e Sexta — 8–10 anos</option><option>12–14 anos</option><option>Sem categoria</option><option>Sem turma definida</option></select></div>
+<div class="field"><label>Data de nascimento</label><input id="novoNasc" type="date"></div>
+<div class="field"><label>Telefone</label><input id="novoTel" placeholder="(00) 00000-0000"></div>
+<div class="field full" style="background:#f1f8f4;padding:10px;border-radius:8px"><b>Plano e valor do aluno</b><div style="font-size:12px;color:#667;margin-top:3px">Escolha o plano e depois o valor correspondente. O valor manual permite digitação.</div></div><div class="field"><label><b>Plano</b></label><select id="novoPlano"><option>Plano Mensal</option><option>Matrícula</option></select></div>
+<div class="field"><label><b>Valor</b></label><select id="novoValor" onchange="toggleAlunoManual()"><option value="70">R$ 70,00</option><option value="144.90" selected>R$ 144,90</option><option value="150">R$ 150,00 — Matrícula</option><option value="manual">Outro valor — Digitar manualmente</option></select><div class="manual" id="novoManualWrap"><input id="novoManual" type="number" step="0.01" min="0" placeholder="Digite o valor"></div></div>
+<div class="full"><button class="btn green" onclick="salvarAluno()">Salvar aluno</button></div>
+</div></div></div>
+
+
+<div class="modalbg" id="editarAlunoModal"><div class="modal">
+<div class="modalhead"><h2 style="margin:0">Editar aluno</h2><button class="close" onclick="closeModal('editarAlunoModal')">×</button></div>
+<div class="formgrid">
+<div class="field full"><label>Aluno *</label><input id="editNome" placeholder="Nome completo"></div>
+<div class="field"><label>Responsável</label><input id="editResp" placeholder="Nome do responsável"></div>
+<div class="field"><label><b>Categoria</b></label>
+<select id="editCat"><option>5-7 anos</option><option>8-10 anos</option><option>12-14 anos</option><option>Sem categoria</option></select></div>
+<div class="field full"><label><b>Turma (escolha manual)</b></label>
+<select id="editTurma"><option>5–7 anos</option><option>Terça e Quinta — 8–10 anos</option><option>Quarta e Sexta — 8–10 anos</option><option>12–14 anos</option><option>Sem categoria</option><option>Sem turma definida</option></select></div>
+<div class="field"><label><b>Status do aluno</b></label><select id="editStatus"><option value="Ativo">🟢 Ativo</option><option value="Inativo">🔴 Inativo</option></select></div>
+<div class="field"><label>Data de nascimento</label><input id="editNasc" type="date"></div>
+<div class="field"><label>Telefone</label><input id="editTel" placeholder="(00) 00000-0000"></div>
+<div class="field full" style="background:#f1f8f4;padding:10px;border-radius:8px"><b>Plano e valor</b><div style="font-size:12px;color:#667;margin-top:3px">A turma é independente da categoria. Escolha o plano e o valor do aluno.</div></div>
+<div class="field"><label><b>Plano</b></label><select id="editPlano"><option>Plano Mensal</option><option>Matrícula</option></select></div>
+<div class="field"><label><b>Valor</b></label>
+<select id="editValor" onchange="toggleEditManual()"><option value="70">R$ 70,00</option><option value="144.90">R$ 144,90</option><option value="150">R$ 150,00 — Matrícula</option><option value="manual">Outro valor — Digitar manualmente</option></select>
+<div class="manual" id="editManualWrap"><input id="editManual" type="number" step="0.01" min="0" placeholder="Digite o valor"></div></div>
+<div class="full"><button class="btn green" onclick="salvarEdicaoAluno()">💾 Salvar alterações</button></div>
+</div></div></div>
+
+<div class="modalbg" id="despModal"><div class="modal">
+<div class="modalhead"><h2 style="margin:0">Nova despesa</h2><button class="close" onclick="closeModal('despModal')">×</button></div>
+<div class="formgrid"><div class="field"><label>Descrição</label><input id="despDesc"></div><div class="field"><label>Valor</label><input id="despValor" type="number" step=".01"></div><div class="field full"><label>Data</label><input id="despData" type="date"></div><div class="full"><button class="btn green" onclick="salvarDespesa()">Salvar despesa</button></div></div>
+</div></div>
+<div class="toast" id="toast"></div>
+
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
+import {
+  getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut
+} from "https://www.gstatic.com/firebasejs/12.18.0/firebase-auth.js";
+import {
+  getFirestore, collection, getDocs, doc, setDoc, writeBatch, deleteDoc
+} from "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBIBkVma4axpBtxYCDrG-TPMcAsWdN2kS0",
+  authDomain: "vida-esportiva-gest.firebaseapp.com",
+  projectId: "vida-esportiva-gest",
+  storageBucket: "vida-esportiva-gest.firebasestorage.app",
+  messagingSenderId: "930020483749",
+  appId: "1:930020483749:web:0b4896addb6625de61634c"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const firestore = getFirestore(app);
+
+window.fb = {
+  auth, firestore,
+  signIn: (email, password) => signInWithEmailAndPassword(auth, email, password),
+  signOut: () => signOut(auth),
+  loadCollection: async (name) => {
+    const snap = await getDocs(collection(firestore, name));
+    return snap.docs.map(d => ({...d.data(), _docId:d.id}));
+  },
+  saveDoc: async (name, id, data) => setDoc(doc(firestore, name, String(id)), data, {merge:true}),
+  deleteDoc: async (name, id) => deleteDoc(doc(firestore, name, String(id))),
+  batchSave: async (name, items) => {
+    const batch = writeBatch(firestore);
+    for (const item of items) {
+      const id = String(item._docId || item.id);
+      const clean = {...item};
+      delete clean._docId;
+      batch.set(doc(firestore, name, id), clean, {merge:true});
+    }
+    await batch.commit();
+  }
+};
+
+onAuthStateChanged(auth, async user => {
+  window.currentFirebaseUser = user || null;
+  if (window.onFirebaseAuth) {
+    try { await window.onFirebaseAuth(user); }
+    catch (err) { console.error(err); }
+  }
+});
+</script>
+
+<script>
+const KEY='vida_esportiva_gestao360_firebase_v1';
+let db={alunos:[],pagamentos:[],despesas:[],historico:[]};
+let firebaseReady=false;
+
+function brl(n){return Number(n||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'})}
+function nowDate(){return new Date().toISOString().slice(0,10)}
+function compAtual(){let d=new Date();return d.toLocaleDateString('pt-BR',{month:'long',year:'numeric'}).replace(/^./,x=>x.toUpperCase())}
+function compISO(){let d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')}
+function comps(){let a=[],d=new Date();for(let i=-2;i<=3;i++){let x=new Date(d.getFullYear(),d.getMonth()+i,1);a.push({v:x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0'),t:x.toLocaleDateString('pt-BR',{month:'long',year:'numeric'})})}return a}
+function init(){
+ document.querySelectorAll('.nav button').forEach(b=>b.onclick=()=>showPage(b.dataset.page));
+ fillCompetencias();
+ document.getElementById('pagAluno').onchange=()=>document.getElementById('pagCat').value=(db.alunos.find(a=>a.id==document.getElementById('pagAluno').value)||{}).cat||'';
+ document.getElementById('pagData').value=nowDate();
+}
+async function onFirebaseAuth(user){
+ const login=document.getElementById('loginScreen');
+ const bar=document.getElementById('firebaseUserBar');
+ if(!user){
+   login.style.display='flex'; bar.style.display='none'; firebaseReady=false; return;
+ }
+ login.style.display='none'; bar.style.display='flex';
+ document.getElementById('firebaseUserEmail').textContent=user.email||'Administrador';
+ firebaseReady=true;
+ try{
+   const [alunos,pagamentos,despesas,historico]=await Promise.all([
+     fb.loadCollection('alunos'),fb.loadCollection('pagamentos'),fb.loadCollection('despesas'),fb.loadCollection('historico')
+   ]);
+   db.alunos=alunos.map(x=>{delete x._docId; return x});
+   db.pagamentos=pagamentos.map(x=>{delete x._docId; return x});
+   db.despesas=despesas.map(x=>{delete x._docId; return x});
+   db.historico=historico.map(x=>{delete x._docId; return x}).sort((a,b)=>String(b.data||'').localeCompare(String(a.data||'')));
+   fillCompetencias(); renderAll();
+   toast('Dados carregados do Firebase.');
+ }catch(err){
+   console.error(err); toast('Não foi possível carregar os dados do Firebase.');
+ }
+}
+async function entrarSistema(){
+ const email=document.getElementById('loginEmail').value.trim();
+ const password=document.getElementById('loginPassword').value;
+ const err=document.getElementById('loginError'),btn=document.getElementById('loginBtn');
+ err.style.display='none';
+ if(!email||!password){err.textContent='Informe e-mail e senha.';err.style.display='block';return}
+ btn.disabled=true;btn.textContent='Entrando...';
+ try{await fb.signIn(email,password);}
+ catch(e){err.textContent='E-mail ou senha inválidos. Verifique os dados do usuário no Firebase.';err.style.display='block';}
+ finally{btn.disabled=false;btn.textContent='Entrar no sistema';}
+}
+async function sairSistema(){await fb.signOut();}
+async function save(){
+ if(!firebaseReady)return;
+ try{
+   await Promise.all([
+     fb.batchSave('alunos',db.alunos),
+     fb.batchSave('pagamentos',db.pagamentos),
+     fb.batchSave('despesas',db.despesas),
+     fb.batchSave('historico',db.historico.slice(0,100))
+   ]);
+ }catch(e){console.error(e);toast('Erro ao salvar no Firebase.');}
+}
+function brl(n){return Number(n||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'})}
+function showPage(id){
+ document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+ document.getElementById(id).classList.add('active');
+ document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('active',b.dataset.page===id));
+ renderAll();
+}
+function fillCompetencias(){
+ let c=comps();document.getElementById('competencia').innerHTML=c.map(x=>`<option value="${x.v}">${x.t}</option>`).join('');
+ document.getElementById('pagComp').innerHTML=c.map(x=>`<option value="${x.v}">${x.t}</option>`).join('');
+ let cur=compISO();document.getElementById('competencia').value=cur;document.getElementById('pagComp').value=cur;
+ const rc=document.getElementById('relatorioComp');if(rc){rc.innerHTML=c.map(x=>`<option value="${x.v}">${x.t}</option>`).join('');rc.value=cur;}
+}
+function openPagamento(){
+ document.getElementById('pagAluno').innerHTML=db.alunos.map(a=>`<option value="${a.id}">${a.nome}</option>`).join('');
+ document.getElementById('pagAluno').value=db.alunos[0]?.id||'';
+ document.getElementById('pagCat').value=db.alunos[0]?.cat||'';
+ document.getElementById('pagData').value=nowDate();document.getElementById('pagModal').classList.add('show');
+}
+function openAluno(){document.getElementById('alunoModal').classList.add('show')}
+function openDespesa(){document.getElementById('despData').value=nowDate();document.getElementById('despModal').classList.add('show')}
+function closeModal(id){document.getElementById(id).classList.remove('show')}
+function toggleManual(){document.getElementById('manualWrap').classList.toggle('show',document.getElementById('pagValor').value==='manual')}
+async function registrarPagamento(){
+ let aluno=db.alunos.find(a=>a.id==document.getElementById('pagAluno').value),v=document.getElementById('pagValor').value==='manual'?Number(document.getElementById('pagManual').value):Number(document.getElementById('pagValor').value);
+ if(!aluno||!v||v<0){toast('Preencha aluno e valor.');return}
+ let comp=document.getElementById('pagComp').value;
+ db.pagamentos.push({id:Date.now(),alunoId:aluno.id,aluno:aluno.nome,cat:aluno.cat,comp,valor:v,data:document.getElementById('pagData').value,forma:document.getElementById('pagForma').value,status:'Pago'});
+ db.historico.unshift({data:new Date().toLocaleString('pt-BR'),texto:`Pagamento de ${brl(v)} registrado para ${aluno.nome}.`});
+ await save();closeModal('pagModal');renderAll();toast('Pagamento registrado com sucesso!');
+}
+async function salvarAluno(){
+ let nome=document.getElementById('novoNome').value.trim();if(!nome){toast('Informe o nome do aluno.');return}
+ const valorSel=document.getElementById('novoValor').value;
+ const valor=valorSel==='manual'?Number(document.getElementById('novoManual').value):Number(valorSel);
+ if(!valor||valor<0){toast('Informe um valor válido.');return}
+ const aluno={id:Date.now(),nome,resp:document.getElementById('novoResp').value,cat:document.getElementById('novoCat').value,turma:document.getElementById('novoTurma').value,nasc:document.getElementById('novoNasc').value,tel:document.getElementById('novoTel').value,plano:document.getElementById('novoPlano').value,valor};
+ db.alunos.push(aluno);
+ db.historico.unshift({data:new Date().toLocaleString('pt-BR'),texto:`Aluno ${nome} cadastrado na turma ${aluno.turma}.`});await save();closeModal('alunoModal');renderAll();toast('Aluno cadastrado!');
+ ['novoNome','novoResp','novoNasc','novoTel','novoManual'].forEach(x=>document.getElementById(x).value='');
+ document.getElementById('novoPlano').value='Plano Mensal';document.getElementById('novoValor').value='144.90';document.getElementById('novoTurma').value='Sem turma definida';document.getElementById('novoManualWrap').classList.remove('show');
+}
+function gerarCompetencia(){toast('Competência atualizada. As mensalidades pagas são vinculadas ao mês selecionado.')}
+
+function toggleEditManual(){
+ document.getElementById('editManualWrap').classList.toggle('show',document.getElementById('editValor').value==='manual');
+}
+function editarAluno(id){
+ const a=db.alunos.find(x=>String(x.id)===String(id));
+ if(!a){toast('Aluno não encontrado.');return;}
+ document.getElementById('editNome').value=a.nome||'';
+ document.getElementById('editResp').value=a.resp||'';
+ document.getElementById('editCat').value=a.cat||'Sem categoria';
+ document.getElementById('editTurma').value=a.turma||'Sem turma definida';
+ document.getElementById('editStatus').value=a.status==='Inativo'?'Inativo':'Ativo';
+ document.getElementById('editNasc').value=a.nasc||'';
+ document.getElementById('editTel').value=a.tel||'';
+ document.getElementById('editPlano').value=a.plano||'Plano Mensal';
+ const valor=Number(a.valorMensalidade ?? a.valor ?? 144.90);
+ const opcoes=[70,144.90,150];
+ if(opcoes.some(v=>Math.abs(v-valor)<0.001)){
+   document.getElementById('editValor').value=String(valor);
+   document.getElementById('editManual').value='';
+   document.getElementById('editManualWrap').classList.remove('show');
+ }else{
+   document.getElementById('editValor').value='manual';
+   document.getElementById('editManual').value=valor?String(valor):'';
+   document.getElementById('editManualWrap').classList.add('show');
+ }
+ document.getElementById('editarAlunoModal').dataset.id=String(a.id);
+ document.getElementById('editarAlunoModal').classList.add('show');
+}
+async function salvarEdicaoAluno(){
+ const modal=document.getElementById('editarAlunoModal');
+ const id=modal.dataset.id;
+ const a=db.alunos.find(x=>String(x.id)===String(id));
+ if(!a){toast('Aluno não encontrado.');return;}
+ const nome=document.getElementById('editNome').value.trim();
+ if(!nome){toast('Informe o nome do aluno.');return;}
+ const sel=document.getElementById('editValor').value;
+ const valor=sel==='manual'?Number(document.getElementById('editManual').value):Number(sel);
+ if(!Number.isFinite(valor)||valor<0){toast('Informe um valor válido.');return;}
+ a.nome=nome;
+ a.resp=document.getElementById('editResp').value.trim();
+ a.cat=document.getElementById('editCat').value;
+ a.turma=document.getElementById('editTurma').value;
+ a.status=document.getElementById('editStatus').value;
+ a.nasc=document.getElementById('editNasc').value;
+ a.tel=document.getElementById('editTel').value.trim();
+ a.plano=document.getElementById('editPlano').value;
+ a.valor=valor;
+ a.valorMensalidade=valor;
+ db.historico.unshift({data:new Date().toLocaleString('pt-BR'),texto:`Aluno ${nome} atualizado: categoria ${a.cat}, turma ${a.turma}, plano ${a.plano}, valor ${brl(valor)}.`});
+ await save();
+ closeModal('editarAlunoModal');
+ renderAll();
+ toast('Dados do aluno atualizados com sucesso!');
+}
+function renderAlunos(){
+ let q=(document.getElementById('buscaAluno')?.value||'').toLowerCase();
+ let cat=document.getElementById('filtroCat')?.value||'Todos';
+ let turma=document.getElementById('filtroTurmaAlunos')?.value||'Todas as turmas';
+ let filtroStatus=document.getElementById('filtroStatusAluno')?.value||'Todos';
+ let arr=db.alunos.filter(a=>{
+   const status=a.status==='Inativo'?'Inativo':'Ativo';
+   return (a.nome+' '+a.resp+' '+(a.tel||'')).toLowerCase().includes(q)
+     &&(cat==='Todos'||a.cat===cat)
+     &&(turma==='Todas as turmas'||(a.turma||'Sem turma definida')===turma)
+     &&(filtroStatus==='Todos'||(filtroStatus==='Ativos'&&status==='Ativo')||(filtroStatus==='Inativos'&&status==='Inativo'));
+ });
+ document.getElementById('alunosBody').innerHTML=arr.map(a=>{
+   const status=a.status==='Inativo'?'Inativo':'Ativo';
+   const statusClass=status==='Ativo'?'paid':'late';
+   const toggleLabel=status==='Ativo'?'🔴 Inativar':'🟢 Ativar';
+   return `<tr><td><b>${a.nome}</b></td><td>${a.resp||'—'}</td><td>${a.cat||'Sem categoria'}</td><td>${a.turma||'Sem turma definida'}</td><td><span class="status ${statusClass}">${status}</span></td><td style="white-space:nowrap"><button class="btn small" onclick='editarAluno(${JSON.stringify(a.id)})'>✏️ Editar</button> <button class="btn small blue" onclick="abrirAlunoPagamento(${a.id})">Pagar</button> <button class="btn small" onclick="alternarStatusAluno(${JSON.stringify(a.id)})">${toggleLabel}</button> <button class="btn small red" onclick="excluirAluno(${JSON.stringify(a.id)})">🗑️ Excluir</button></td></tr>`;
+ }).join('')||`<tr><td colspan="6" class="empty">Nenhum aluno encontrado.</td></tr>`;
+}
+async function alternarStatusAluno(id){
+ const a=db.alunos.find(x=>String(x.id)===String(id));
+ if(!a){toast('Aluno não encontrado.');return;}
+ const novoStatus=a.status==='Inativo'?'Ativo':'Inativo';
+ const acao=novoStatus==='Ativo'?'ativar':'inativar';
+ if(!confirm(`Deseja ${acao} o aluno "${a.nome}"?`)) return;
+ a.status=novoStatus;
+ db.historico.unshift({data:new Date().toLocaleString('pt-BR'),texto:`Aluno ${a.nome} ${novoStatus==='Ativo'?'ativado':'inativado'}.`});
+ await save();
+ renderAll();
+ toast(`Aluno ${novoStatus==='Ativo'?'ativado':'inativado'} com sucesso!`);
+}
+async function excluirAluno(id){
+ const a=db.alunos.find(x=>String(x.id)===String(id));
+ if(!a){toast('Aluno não encontrado.');return;}
+ const confirmar=confirm(`EXCLUIR DEFINITIVAMENTE o aluno "${a.nome}"?\n\nEsta ação remove o cadastro do aluno do Firebase. Os registros financeiros históricos não serão apagados automaticamente.`);
+ if(!confirmar)return;
+ try{
+   await fb.deleteDoc('alunos',a.id);
+   db.alunos=db.alunos.filter(x=>String(x.id)!==String(a.id));
+   db.historico.unshift({data:new Date().toLocaleString('pt-BR'),texto:`Aluno ${a.nome} excluído do cadastro.`});
+   renderAll();
+   toast('Aluno excluído com sucesso!');
+ }catch(e){
+   console.error(e);
+   toast('Não foi possível excluir o aluno.');
+ }
+}
+function abrirAlunoPagamento(id){openPagamento();document.getElementById('pagAluno').value=id;document.getElementById('pagCat').value=(db.alunos.find(a=>a.id===id)||{}).cat||''}
+function renderMensalidades(){
+ let comp=document.getElementById('competencia').value||compISO(),q=(document.getElementById('buscaMens')?.value||'').toLowerCase(),st=document.getElementById('filtroStatus')?.value||'Todos';
+ let rows=db.alunos.map(a=>{
+  let p=db.pagamentos.find(x=>x.alunoId===a.id&&x.comp===comp);
+  let status=p?'Pago':'Atrasado',valor=p?.valor||144.90;
+  return {a,p,status,valor};
+ }).filter(x=>(x.a.nome+' '+x.a.resp+' '+x.a.cat).toLowerCase().includes(q)&&(st==='Todos'||st===x.status));
+ document.getElementById('mensBody').innerHTML=rows.map(x=>`<tr><td>${x.a.nome}</td><td>${x.a.cat}</td><td>${x.p?.comp||comp}</td><td>${x.p?.data?new Date(x.p.data+'T00:00:00').toLocaleDateString('pt-BR'):'—'}</td><td>${brl(x.valor)}</td><td>${x.p?.forma||'—'}</td><td><span class="status ${x.status==='Pago'?'paid':'late'}">${x.status}</span></td><td><button class="btn small blue" onclick="abrirAlunoPagamento(${x.a.id})">Pagar</button></td></tr>`).join('');
+ let pagos=rows.filter(x=>x.p).reduce((s,x)=>s+x.p.valor,0),at=rows.filter(x=>!x.p).reduce((s,x)=>s+x.valor,0);
+ document.getElementById('mPago').textContent=brl(pagos);document.getElementById('mReceber').textContent=brl(at);document.getElementById('mAtrasado').textContent=brl(at);document.getElementById('mQtd').textContent=rows.length;
+ document.getElementById('inadBody').innerHTML=rows.filter(x=>!x.p).map(x=>`<tr><td>${x.a.nome}</td><td>${comp}</td><td>${brl(x.valor)}</td><td><span class="status late">Atrasado</span></td><td><button class="btn small blue" onclick="abrirAlunoPagamento(${x.a.id})">Pagar</button></td></tr>`).join('')||`<tr><td colspan="5" class="empty">Nenhum inadimplente nesta competência.</td></tr>`;
+}
+async function salvarDespesa(){
+ let d=document.getElementById('despDesc').value.trim(),v=Number(document.getElementById('despValor').value);if(!d||!v){toast('Informe descrição e valor.');return}
+ db.despesas.push({id:Date.now(),desc:d,valor:v,data:document.getElementById('despData').value});db.historico.unshift({data:new Date().toLocaleString('pt-BR'),texto:`Despesa ${d} de ${brl(v)} cadastrada.`});await save();closeModal('despModal');renderAll();toast('Despesa salva!');
+}
+function toggleAlunoManual(){document.getElementById('novoManualWrap').classList.toggle('show',document.getElementById('novoValor').value==='manual')}
+function normalTurma(t){return String(t||'Sem turma definida').replace('—','—').trim()}
+function isCompFuture(comp){return comp>compISO()}
+function statusMensalidadeAluno(a,comp){
+  const p=db.pagamentos.find(x=>String(x.alunoId)===String(a.id)&&x.comp===comp);
+  if(p)return {tipo:'Pago',classe:'paid',pagamento:p};
+  if(comp<compISO())return {tipo:'Inadimplente',classe:'late',pagamento:null};
+  return {tipo:'Pendente/futuro',classe:'open',pagamento:null};
+}
+function valorMensalidadeAluno(a){return Number(a.valorMensalidade||a.valor||144.90)||144.90}
+function renderRelatorio(){
+ const turma=document.getElementById('relatorioTurma')?.value||'Todas as turmas';
+ const comp=document.getElementById('relatorioComp')?.value||compISO();
+ const q=(document.getElementById('relatorioBusca')?.value||'').toLowerCase();
+ let arr=db.alunos.filter(a=>{
+   const t=normalTurma(a.turma);
+   const turmaOk=turma==='Todas as turmas'||t===turma;
+   const texto=(a.nome+' '+(a.resp||'')+' '+(a.tel||'')+' '+(a.cat||'')+' '+t).toLowerCase();
+   return turmaOk&&texto.includes(q);
+ });
+ let pagantes=0,inad=0,pend=0,atraso=0,previsto=0;
+ const rows=arr.map(a=>{const st=statusMensalidadeAluno(a,comp),valor=valorMensalidadeAluno(a);previsto+=valor;if(st.tipo==='Pago')pagantes++;else if(st.tipo==='Inadimplente'){inad++;atraso+=valor}else pend++;return {a,st,valor};});
+ document.getElementById('relTotal').textContent=arr.length;
+ document.getElementById('relPagantes').textContent=pagantes;
+ document.getElementById('relInadimplentes').textContent=inad;
+ document.getElementById('relAtraso').textContent=brl(atraso);
+ document.getElementById('relPendentes').textContent=pend;
+ document.getElementById('relPrevisto').textContent=brl(previsto);
+ const compLabel=new Date(comp+'-01T00:00:00').toLocaleDateString('pt-BR',{month:'long',year:'numeric'});
+ document.getElementById('relatorioTitulo').textContent=turma==='Todas as turmas'?'Relatório — Todas as turmas':`Relatório — ${turma}`;
+ document.getElementById('relatorioSubtitulo').textContent=`Competência: ${compLabel} • ${arr.length} aluno(s)`;
+ document.getElementById('relatorioBody').innerHTML=rows.map(x=>`<tr><td><b>${x.a.nome}</b></td><td>${x.a.resp||'—'}</td><td>${x.a.tel||'—'}</td><td>${normalTurma(x.a.turma)}</td><td>${brl(x.valor)}</td><td><span class="status ${x.st.classe}">${x.st.tipo}</span></td></tr>`).join('')||'<tr><td colspan="6" class="empty">Nenhum aluno encontrado para os filtros selecionados.</td></tr>';
+ document.getElementById('relatorioRodape').textContent=`Gerado em ${new Date().toLocaleString('pt-BR')}. Pagantes: ${pagantes} • Inadimplentes: ${inad} • Pendentes/futuros: ${pend} • Total em atraso: ${brl(atraso)}.`;
+}
+function imprimirRelatorio(){renderRelatorio();window.print()}
+function abrirRelatorioTurma(turma){showPage('relatorios');document.getElementById('relatorioTurma').value=turma;renderRelatorio()}
+function abrirRelatorioCategoria(cat){showPage('relatorios');document.getElementById('relatorioTurma').value='Todas as turmas';document.getElementById('relatorioBusca').value='';renderRelatorio();toast('Relatório aberto. Para filtrar por categoria, use o cadastro de alunos.')}
+function renderAll(){
+ renderAlunos();renderMensalidades();
+ let pagos=db.pagamentos.reduce((s,p)=>s+p.valor,0),desp=db.despesas.reduce((s,p)=>s+p.valor,0);
+ const alunosAtivos=db.alunos.filter(a=>a.status!=='Inativo');
+ document.getElementById('dashAlunos').textContent=alunosAtivos.length;
+ document.getElementById('dashPago').textContent=brl(pagos);
+ const previstoAtivo=alunosAtivos.reduce((s,a)=>s+valorMensalidadeAluno(a),0);
+ document.getElementById('dashReceber').textContent=brl(Math.max(0,previstoAtivo-pagos));
+ document.getElementById('dashAtrasado').textContent=brl(Math.max(0,previstoAtivo-pagos));
+ document.getElementById('caixaEntradas').textContent=brl(pagos);document.getElementById('caixaSaidas').textContent=brl(desp);document.getElementById('caixaSaldo').textContent=brl(pagos-desp);
+ document.getElementById('despBody').innerHTML=db.despesas.map(d=>`<tr><td>${d.desc}</td><td>${d.data?new Date(d.data+'T00:00:00').toLocaleDateString('pt-BR'):'—'}</td><td>${brl(d.valor)}</td></tr>`).join('')||`<tr><td colspan="3" class="empty">Nenhuma despesa cadastrada.</td></tr>`;
+ document.getElementById('histBody').innerHTML=db.historico.length?db.historico.map(h=>`<p><b>${h.data}</b> — ${h.texto}</p>`).join(''):'<div class="empty">Nenhuma alteração registrada.</div>';
+ if(document.getElementById('relatorioBody')) renderRelatorio();
+}
+function exportar(){
+ let blob=new Blob([JSON.stringify(db,null,2)],{type:'application/json'});
+ let a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='backup-vida-esportiva-'+nowDate()+'.json';a.click();URL.revokeObjectURL(a.href)
+}
+async function importar(e){
+ let f=e.target.files[0];if(!f)return;
+ let r=new FileReader();
+ r.onload=async()=>{
+  try{
+   db=JSON.parse(r.result);
+   await save();renderAll();toast('Backup importado para o Firebase!');
+  }catch{toast('Arquivo inválido.')}
+ };
+ r.readAsText(f)
+}
+function parseCSVLine(line, sep=';'){
+ let out=[],cur='',quoted=false;
+ for(let i=0;i<line.length;i++){
+   const ch=line[i];
+   if(ch==='"'){
+     if(quoted && line[i+1]==='"'){cur+='"';i++;}
+     else quoted=!quoted;
+   }else if(ch===sep && !quoted){out.push(cur.trim());cur='';}
+   else cur+=ch;
+ }
+ out.push(cur.trim());
+ return out;
+}
+function normKey(s){
+ return String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toUpperCase().trim();
+}
+function stableId(prefix,text){
+ let h=0,s=String(text||'');
+ for(let i=0;i<s.length;i++)h=((h<<5)-h+s.charCodeAt(i))|0;
+ return prefix+'_'+Math.abs(h);
+}
+async function importarCSV(event){
+ const file=event.target.files[0];
+ if(!file)return;
+ const status=document.getElementById('importStatus');
+ status.textContent='Lendo CSV...';
+ try{
+   let text=await file.text();
+   text=text.replace(/^\uFEFF/,'');
+   // Aceita CSV com ; (Google Planilhas em pt-BR) e também com vírgula.
+   const firstLine=(text.split(/\r?\n/).find(x=>x.trim())||'');
+   const sep=(firstLine.split(';').length >= firstLine.split(',').length) ? ';' : ',';
+   const lines=text.split(/\r?\n/).filter(x=>x.trim());
+   if(lines.length<2)throw new Error('CSV vazio ou sem registros.');
+   const headers=parseCSVLine(lines[0],sep).map(normKey);
+   const idx=k=>headers.indexOf(normKey(k));
+   const iTipo=idx('TIPO'),iData=idx('DATA'),iNome=idx('DESCRIÇÃO/NOME'),iCat=idx('CATEGORIA'),iVal=idx('VALOR'),iObs=idx('OBSERVAÇÃO');
+   if(iTipo<0||iNome<0)throw new Error('Colunas TIPO e DESCRIÇÃO/NOME não encontradas.');
+   let count={alunos:0,pagamentos:0,despesas:0};
+   for(let n=1;n<lines.length;n++){
+     const c=parseCSVLine(lines[n],sep);
+     const tipo=normKey(c[iTipo]);
+     const nome=(c[iNome]||'').trim();
+     const data=(c[iData]||'').trim();
+     const cat=(c[iCat]||'').trim();
+     const obs=(c[iObs]||'').trim();
+     const valor=Number(String(c[iVal]||'0').replace(/\./g,'').replace(',','.'))||0;
+     if(tipo.includes('ALUNO')){
+       const id=stableId('aluno',nome+'|'+cat+'|'+obs);
+       const parts=obs.split('|').map(x=>x.trim());
+       const resp=parts.find(x=>/responsavel/i.test(x))?.replace(/responsavel\s*:?/i,'').trim()||obs;
+       const tel=(obs.match(/(?:\(\d{2}\)\s*)?9?\d{4,5}[-\s]?\d{4}/)||[''])[0];
+       const aluno={id,nome,resp,cat:cat||'Sem categoria',turma:'Sem turma definida',nasc:'',tel,plano:'Plano Mensal',valor:144.90};
+       const pos=db.alunos.findIndex(a=>a.id===id);
+       if(pos>=0)db.alunos[pos]=aluno; else db.alunos.push(aluno);
+       count.alunos++;
+     }else if(tipo.includes('PAG')){
+       // Algumas linhas de pagamento da planilha não possuem nome do aluno.
+       // Mesmo assim, o lançamento financeiro deve ser importado.
+       const id=stableId('pag',tipo+'|'+data+'|'+nome+'|'+cat+'|'+valor+'|'+obs);
+       const aluno=nome ? db.alunos.find(a=>normKey(a.nome)===normKey(nome)) : null;
+       const comp=(obs && /^\d{4}-\d{2}$/.test(obs)) ? obs : (data?data.slice(0,7):compISO());
+       db.pagamentos.push({id,alunoId:aluno?.id||'',aluno:nome||'Pagamento importado',cat:cat||aluno?.cat||'Sem categoria',comp,valor,data,forma:'Importado',status:'Pago',obs});
+       count.pagamentos++;
+     }else if(tipo.includes('DESP')){
+       const id=stableId('desp',tipo+'|'+data+'|'+nome+'|'+valor+'|'+obs);
+       db.despesas.push({id,desc:nome,valor,data,obs});
+       count.despesas++;
+     }
+   }
+   // Remove duplicados por ID antes de gravar.
+   for(const k of ['alunos','pagamentos','despesas']) db[k]=Array.from(new Map(db[k].map(x=>[String(x.id),x])).values());
+   await save();
+   renderAll();
+   status.textContent=`Importação concluída: ${count.alunos} alunos, ${count.pagamentos} pagamentos e ${count.despesas} despesas processados.`;
+   toast('CSV importado para o Firebase!');
+ }catch(e){
+   console.error(e);
+   status.textContent='Erro: '+e.message;
+   toast('Não foi possível importar o CSV.');
+ }
+}
+function abrirForms(){let u=document.getElementById('formsUrl').value.trim();if(!u){toast('Cole primeiro o link do Google Forms.');return}window.open(u,'_blank')}
+function toast(t){let x=document.getElementById('toast');x.textContent=t;x.style.display='block';setTimeout(()=>x.style.display='none',2500)}
+init();
+</script>
+</body>
+</html>
